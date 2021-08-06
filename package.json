@@ -15,6 +15,7 @@
     "@antv/l7-maps": "^2.2.41",
     "@jiaminghi/data-view": "^2.10.0",
     "animejs": "^3.2.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "echarts": "^4.9.0",
     "vue": "^2.6.11",

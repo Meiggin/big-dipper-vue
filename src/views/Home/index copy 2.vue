@@ -82,7 +82,6 @@
 import AMapLoader from "@amap/amap-jsapi-loader";
 import UserDataPreview from "./components/UserDataPreview";
 // import DeviceDataPreview from "./components/DeviceDataPreview";
-import axios from "axios";
 import { Scene, PointLayer } from "@antv/l7";
 export default {
   name: "DataPreview",
@@ -107,7 +106,22 @@ export default {
       },
       colors: {},
       overlaysList: [],
+      overlayGroup: null,
+      district: null,
+      overlayGroups: null,
       AMap: null,
+      ADlist: [
+        { str: "上城区" },
+        { str: "拱墅区" },
+        { str: "西湖区" },
+        { str: "滨江区" },
+        { str: "萧山区" },
+        { str: "余杭区" },
+        { str: "临平区" },
+        { str: "钱塘区" },
+        { str: "富阳区" },
+        { str: "临安区" },
+      ],
     };
   },
   mounted() {
@@ -169,15 +183,15 @@ export default {
           this.AMap.plugin("AMap.DistrictSearch", () => {
             this.district = new this.AMap.DistrictSearch({
               extensions: "all",
-              level: "city",
+              level: "district",
             });
-            this.districtPolygon();
+            this.districtPolygon(this.ADlist);
           });
           this.mapValue.on("zoomend", (e) => {
             let currentZoom = this.mapValue.getZoom();
             if (currentZoom <= 10) {
               this.mapValue.clearMap();
-              this.districtPolygon();
+              this.districtPolygon(this.ADlist);
             }
           });
         })
@@ -185,167 +199,85 @@ export default {
           console.log(e);
         });
     },
-    districtPolygon() {
-      this.district.search("杭州市", (status, result) => {
-        const [bounds, mask] = [result.districtList[0].boundaries, []];
-        if (bounds) {
-          for (let x = 0, l = bounds.length; x < l; x++) {
-            let polygon = new this.AMap.Polygon({
-              map: this.mapValue,
-              strokeWeight: 5,
-              strokeOpacity: 1,
-              zIndex:5,
-              strokeColor: "#4d4d4d",
-              path: bounds[x],
-              // fillOpacity: 0.2,
-              // fillColor: "#000",
-              id: x,
-            });
-            this.polygon = polygon;
-            mask.push(polygon);
-          }
-          this.mapValue.add(mask);
-          this.mapValue.setFitView(mask); //视口自适应
-        }
-        const map = this.mapValue;
-        AMap.plugin(["AMap.DistrictLayer"], () => {
-          const disProvince = new AMap.DistrictLayer.Province({
-            adcode: ["330100"],
-            depth: 2,
-            styles: {
-              fill: function (properties) {
-                let adcode = properties.adcode;
-                return getColorByAdcode(adcode);
-              },
-              "province-stroke": "#09b8bf",
-              "city-stroke": "#09b8bf",
-              "county-stroke": "#09b8bf", //线条颜色
-            },
-          });
-          this.disProvince = disProvince;
-          disProvince.setMap(map);
-        });
+    getColorByAdcode(adcode) {
+      if (!this.colors[adcode]) {
+        var gb = Math.random() * 155 + 50;
+        this.colors[adcode] = "rgb(" + gb + "," + gb + ",255)";
+      }
 
-        const getColorByAdcode = (adcode) => {
-          if (!this.colors[adcode]) {
-            var gb = Math.random() * 155 + 50;
-            this.colors[adcode] = "rgb(" + gb + "," + gb + ",255)";
-          }
-          return this.colors[adcode];
-        };
-        var loca = new Loca.Container({
-          map,
-        });
+      return this.colors[adcode];
+    },
+    districtPolygon(item) {
+      for (let i in item) {
+        this.district.search(item[i].str, (status, result) => {
+          let bounds = result.districtList[0].boundaries;
+          let polygons = [];
+          if (bounds) {
+            for (let x = 0, l = bounds.length; x < l; x++) {
+              //生成行政区划polygon
+              let polygon = new this.AMap.Polygon({
+                map: this.mapValue,
+                strokeWeight: 4,
+                strokeOpacity: 1,
+                strokeColor: "#4d4d4d",
+                cursor: "pointer",
+                path: bounds[x],
+                fillOpacity: 0.2,
+                fillColor: "#000",
+                id: i,
+                strokeStyle: "",
+              });
+              polygons.push(polygon);
 
-        var pl = (window.pl = new Loca.PointLayer({
-          zIndex: 100,
-          opacity: 1,
-          blend: "normal",
-        }));
-
-        var geo = new Loca.GeoJSONSource({
-          url: "https://a.amap.com/Loca/static/loca-v2/demos/mock_data/gdp.json",
-        });
-        pl.setSource(geo);
-        var colors = [
-          "rgba(254,255,198,0.95)",
-          "rgba(255,238,149,0.95)",
-          "rgba(255,217,99,0.95)",
-          "rgba(255,175,43,0.95)",
-          "rgba(255,135,24,0.95)",
-          "rgba(234,10,0,0.95)",
-          "rgba(195,0,0,0.95)",
-          "rgba(139,0,0,0.95)",
-        ];
-
-        var style = {
-          unit: "meter",
-          radius: (index, f) => {
-            var n = f.properties["人口"];
-            return n * 10;
-          },
-          color: (index, f) => {
-            var n = Math.min(7, ~~(f.properties["人均GDP"] / 10000));
-            return colors[n];
-          },
-          borderWidth: 0,
-          blurRadius: -1,
-        };
-
-        pl.setStyle(style);
-        loca.add(pl);
-
-        // 动画
-        map.on("complete", function () {
-          pl.addAnimate({
-            key: "radius",
-            value: [0, 1],
-            duration: 2000,
-            easing: "ElasticOut",
-            // yoyo: false,
-            // repeat: 1,
-          });
-          pl.show(600);
-        });
-
-        map.on("mousemove", (e) => {
-          const feat = pl.queryFeature(e.pixel.toArray());
-          if (feat) {
-            pl.setStyle({
-              unit: "meter",
-              radius: (index, f) => {
-                var n = f.properties["人口"] * 100;
-                if (f === feat) {
-                  return n + 3;
-                }
-                return n;
-              },
-              color: (index, f) => {
-                var n = Math.min(7);
-                return colors[n];
-              },
-              borderWidth: (index, f) => {
-                return f === feat ? 100 : 0;
-              },
-              blurWidth: -1,
-            });
+              // if (currentZoom > 11) {
+              //   polygon.off("mouseover", this.polygonMouseover(polygon));
+              //   polygon.off("mouseout", this.polygonMouseout(polygon));
+              if (item.length == 1) {
+                this.polygonClick(polygon);
+              } else {
+                this.polygonMouse(polygon);
+                this.polygonClick(polygon);
+              }
+              // }
+            }
+            // this.mapValue.setFitView();
           }
         });
-      });
+      }
     },
     regeoCode() {
       // this.mapValue = new this.AMap.Geocoder
     },
-    polygonClick() {
-      this.polygon.on("click", (e) => {
+    polygonClick(polygon) {
+      polygon.on("click", (e) => {
         // const { lng, lat } = e.lnglat;
         // let currentZoom = this.mapValue.getZoom();
         // let overlaysList = this.mapValue.getAllOverlays("polygon");
         let overlaysList = this.mapValue.getAllOverlays("polygon");
-        console.log(overlaysList);
-        // if (overlaysList.length != 1) {
-        //   this.mapValue.clearMap();
-        // }
-        // let geocoder = new this.AMap.Geocoder();
-        // geocoder.getAddress(e.lnglat, (status, result) => {
-        //   if (status === "complete" && result.regeocode) {
-        //     console.log(result.regeocode.addressComponent.district);
-        //     let item = [{ str: result.regeocode.addressComponent.district }];
-        //     this.districtPolygon();
-        //   }
-        // });
-        // this.mapValue.setFitView([e.target]);
+        console.log(overlaysList.length);
+        if (overlaysList.length != 1) {
+          this.mapValue.clearMap();
+        }
+        let geocoder = new this.AMap.Geocoder();
+        geocoder.getAddress(e.lnglat, (status, result) => {
+          if (status === "complete" && result.regeocode) {
+            console.log(result.regeocode.addressComponent.district);
+            let item = [{ str: result.regeocode.addressComponent.district }];
+            this.districtPolygon(item);
+          }
+        });
+        this.mapValue.setFitView([e.target]);
       });
     },
-    polygonMouse(disProvince) {
-      disProvince.on("mouseover", () => {
-        disProvince.setOptions({
+    polygonMouse(polygon) {
+      polygon.on("mouseover", () => {
+        polygon.setOptions({
           fillOpacity: 0.2,
           fillColor: "#3779fd",
         });
       });
-      disProvince.on("mouseout", () => {
-        disProvince.setOptions({
+      polygon.on("mouseout", () => {
+        polygon.setOptions({
           fillOpacity: 0.2,
           fillColor: "#000",
         });
