@@ -7,54 +7,11 @@
     <section ref="sectionRef">
       <!-- 地图 -->
       <div id="userMap" class="markerClass" style="height: 100%"></div>
-      <!-- 杭州用户数据 -->
-      <!-- <div class="data-info">
-        <ul>
-          <li v-for="item in cityInfoList" :key="item.id"
-              :class="[{'u-iotdoor': item.id === 'u-iotdoor'}, {'u-city': item.id === 'u-city'}, {'u-community': item.id === 'u-community'}]">
-            <div>
-              <span :class="[{'flop-figure': !isNaN(ls)}, {'flop-comma': isNaN(ls)}]" v-for="(ls, index) in item.valueArr" :key="item.id + index">
-                <i v-if="!isNaN(ls)">0123456789</i>
-                <span v-else>{{ls}}</span>
-              </span>
-              <div class="percentage">
-                <img :src="item.type === 0 ? riseImage : declineImage" alt="">
-                <span class="span" :class="{'decline': item.type === 1}">{{item.percentage}}</span>
-              </div>
-            </div>
-            <div>{{item.name}}</div>
-          </li>
-        </ul>
-      </div> -->
+      <!-- 边 -->
       <keep-alive>
-        <UserDataPreview
-          ref="user"
-          :height="height"
-          :fullscreen="fullscreen"
-          :riseImage="riseImage"
-          :declineImage="declineImage"
-        ></UserDataPreview>
-        <!-- <DeviceDataPreview
-          :height="height"
-          :fullscreen="fullscreen"
-          :riseImage="riseImage"
-          :declineImage="declineImage"
-        ></DeviceDataPreview> -->
+        <UserDataPreview ref="user" :fullscreen="fullscreen"></UserDataPreview>
       </keep-alive>
     </section>
-    <!-- 气泡详情 -->
-    <!-- <div ref="popover" class="city-popover">
-      <p class="popover-title">区域： {{ bubbleData.cityName }}</p>
-      <div>
-        <div>
-          <canvas id="cityPopover" width="120px" height="120px"></canvas>
-        </div>
-        <div>
-          <p>公司 &nbsp; {{ bubbleData.openUserCount }}</p>
-          <p>数量 &nbsp; {{ bubbleData.communityCount }}</p>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -73,8 +30,6 @@ export default {
       height: "",
       cityInfoList: [],
       updateTime: "",
-      riseImage: require("@/assets/rise.png"),
-      declineImage: require("@/assets/decline.png"),
       bubbleData: {
         cityCode: "",
         cityName: "",
@@ -126,7 +81,7 @@ export default {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         this.showLoading();
-        this.height = `${(this.$refs.sectionRef.offsetHeight - 50) / 3}px`;
+        this.height = `${this.$refs.sectionRef.offsetHeight}px`;
       }, 100);
     },
     // 用户地图
@@ -155,7 +110,7 @@ export default {
             expandZoomRange: true, // 是否支持可以扩展最大缩放级别,和zooms属性配合使用设置为true的时候，zooms的最大级别在PC上可以扩大到20级，移动端还是高清19/非高清20
             // gestureHandling: "greedy",//谷歌里面的// hybrid包含卫星和地名
             // zooms: 8,
-            zooms: [9, 20],
+            // zooms: [9, 20],
             defaultCursor: "pointer", // 变成小手 地图默认鼠标样式。参数defaultCursor应符合CSS的cursor属性规范
             showLabel: true, // 显示地图文字标记
           });
@@ -170,7 +125,9 @@ export default {
             map: this.mapValue,
           });
           this.mapValue.on("zoomend", (e) => {
+            
             let currentZoom = this.mapValue.getZoom();
+            console.log(currentZoom);
             if (currentZoom <= 10) {
               this.mapValue.clearMap();
               this.districtPolygon(this.ADlist);
@@ -181,14 +138,6 @@ export default {
         .catch((e) => {
           console.log(e);
         });
-    },
-    getColorByAdcode(adcode) {
-      if (!this.colors[adcode]) {
-        var gb = Math.random() * 155 + 50;
-        this.colors[adcode] = "rgb(" + gb + "," + gb + ",255)";
-      }
-
-      return this.colors[adcode];
     },
     districtPolygon(item) {
       for (let i in item) {
@@ -233,12 +182,14 @@ export default {
     },
     polygonClick(polygon) {
       polygon.on("click", (e) => {
+        console.log(1111);
         let overlaysList = this.mapValue.getAllOverlays("polygon");
         console.log(overlaysList.length);
         if (overlaysList.length != 1) {
           this.mapValue.clearMap();
         }
         let geocoder = new this.AMap.Geocoder();
+
         geocoder.getAddress(e.lnglat, (status, result) => {
           if (status === "complete" && result.regeocode) {
             console.log(result.regeocode.addressComponent.district);
