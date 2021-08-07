@@ -38,13 +38,6 @@
 </template>
 
 <script>
-import {
-  previewData,
-  userRankingData,
-  userStates,
-  userPortraitData,
-  userChannelData,
-} from "../../../utils/jsonData";
 // 自定义排名轮播
 // import ScrollRankingBoard from '@/components/ScrollRankingBoard/src/index'
 export default {
