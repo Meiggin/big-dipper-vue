@@ -9,7 +9,8 @@
       <div id="userMap" class="markerClass" style="height: 100%"></div>
       <!-- 边 -->
       <keep-alive>
-        <UserDataPreview ref="user" :fullscreen="fullscreen"></UserDataPreview>
+        <BankDataPreview ref="user" :fullscreen="fullscreen"></BankDataPreview>
+        <FirmDataPreview ref="user" :fullscreen="fullscreen"></FirmDataPreview>
       </keep-alive>
     </section>
   </div>
@@ -17,11 +18,12 @@
 
 <script>
 import AMapLoader from "@amap/amap-jsapi-loader";
-import UserDataPreview from "./components/UserDataPreview";
+import BankDataPreview from "./components/BankDataPreview";
+import FirmDataPreview from "./components/FirmDataPreview";
 import cityJson from "@/utils/jsonData.json";
 export default {
   name: "DataPreview",
-  components: { UserDataPreview },
+  components: { BankDataPreview ,FirmDataPreview},
   data() {
     return {
       active: 2,
@@ -125,7 +127,6 @@ export default {
             map: this.mapValue,
           });
           this.mapValue.on("zoomend", (e) => {
-            
             let currentZoom = this.mapValue.getZoom();
             console.log(currentZoom);
             if (currentZoom <= 10) {
@@ -255,4 +256,12 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus">
 @import './index.styl';
+
+.amap-logo {
+  display: none !important;
+}
+
+.amap-copyright {
+  opacity: 0;
+}
 </style>

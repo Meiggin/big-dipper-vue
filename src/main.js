@@ -1,42 +1,28 @@
 
-(function (win) {
-  var bodyStyle = document.createElement('style')
-  bodyStyle.innerHTML = `body{width:7680px; height:3240px!important;}`
-  document.documentElement.firstElementChild.appendChild(bodyStyle)
+(function () {
+  let docEle = document.documentElement
+  let screenRatioByDesign = 64 / 27
+  function setHtmlFontSize() {
+    var screenRatio = docEle.clientWidth / docEle.clientHeight;
+    console.log(screenRatio, screenRatioByDesign)
+    var fontSize = (
+      screenRatio > screenRatioByDesign
+        ? (screenRatioByDesign / screenRatio)
+        : 1
+    ) * docEle.clientWidth / 10;
 
-  function refreshScale() {
-    let docWidth = document.documentElement.clientWidth;
-    let docHeight = document.documentElement.clientHeight;
-    var designWidth = 7680,
-      designHeight = 3240,
-      widthRatio = docWidth / designWidth,
-      heightRatio = docHeight / designHeight;
-    document.body.style = `transform:scale(${widthRatio},${heightRatio});transform-origin:left top;`;
-    // 应对浏览器全屏切换前后窗口因短暂滚动条问题出现未占满情况
-    setTimeout(function () {
-      var lateWidth = document.documentElement.clientWidth,
-        lateHeight = document.documentElement.clientHeight;
-      if (lateWidth === docWidth) return;
-
-      widthRatio = lateWidth / designWidth
-      heightRatio = lateHeight / designHeight
-      document.body.style = "transform:scale(" + widthRatio + "," + heightRatio + ");transform-origin:left top;"
-    }, 0)
+    docEle.style.fontSize = fontSize.toFixed(3) + "px";
   }
-  refreshScale()
+  setHtmlFontSize()
+  window.addEventListener('resize', setHtmlFontSize)
+})();
 
-  win.addEventListener("pageshow", function (e) {
-    if (e.persisted) { // 浏览器后退的时候重新计算
-      refreshScale()
-    }
-  }, false);
-  win.addEventListener("resize", refreshScale, false);
-})(window)
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import echarts from 'echarts'
 import './utils/flexible';
+import './assets/font/css/index.css'
 import {
   loading,
 } from '@jiaminghi/data-view'

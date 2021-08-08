@@ -11,18 +11,15 @@
   list-style: none;
 }
 
-html, #app {
+html, body, #app {
   height: 100%;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  font-size: 12px;
   padding: 0;
   margin: 0;
-}
-
-body {
-  width: 7680px;
-  height: 3240px;
+  font-family: SourceHanSansCN;
 }
 </style>
