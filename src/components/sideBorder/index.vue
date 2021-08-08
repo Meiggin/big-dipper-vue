@@ -23,7 +23,6 @@ export default {
 .dv-scroll-board {
   position: relative;
   width: 908px;
-  min-height: 460px;
   color: #fff;
 
   .statusImg1 {
