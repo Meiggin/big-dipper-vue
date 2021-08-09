@@ -27,6 +27,52 @@
 		height: 100%;
 	}
 
+	.bank-baking-preview {
+		width: 750px;
+		height: 260px;
+		position: absolute;
+		top: 102px;
+		left: 1107px;
+		z-index: 3;
+		color: #fff;
+
+		h3 {
+			font-size: 61px;
+			letter-spacing: 7px;
+			margin-left: 20px;
+		}
+
+		.bank-list {
+			ul {
+				display: flex;
+				width: 100%;
+
+				li {
+					width: 144px;
+					height: 144px;
+					background-image: url('../../assets/oval.png');
+					background-size: contain;
+					font-size: 27px;
+					letter-spacing: 4px;
+					word-wrap: break-word;
+
+					p {
+						text-align: center;
+						width: 70px;
+						margin: 0 auto;
+						padding-top: 32px;
+						cursor: pointer;
+						opacity: 0.5;
+					}
+
+					p:hover {
+						opacity: 1;
+					}
+				}
+			}
+		}
+	}
+
 	.user-data-preview {
 		height: 100%;
 		width: 100%;
@@ -108,105 +154,135 @@
 			.live-status {
 				overflow: hidden;
 				height: 100%;
-				background: rgba(0, 0, 0, 0.9);
+				background: rgba(0, 0, 0, 0.7);
 			}
 
 			.status-details {
 				height: 100%;
 				width: 100%;
 
+				.chartsBlock {
+					margin: 0 auto;
+					padding-top: 30px;
+				}
+
 				.dataSiderList {
 					margin-left: 34px;
-				}
 
-				.content {
-					height: calc(100% - 31px);
-					display: flex;
-					align-items: center;
-					justify-content: center;
+					// 左侧
+					.bankAddLine-charts {
+						width: 800px;
+						height: 250px;
+					}
 
-					> ul {
+					.bankDistributed-charts {
+						width: 800px;
+						height: 400px;
+						position: absolute;
+						top: 0;
+						left: 50%;
+						transform: translate(-50%, 0);
+					}
+
+					.bankProportion-charts {
+						width: 800px;
+						height: 300px;
+					}
+
+					// 右侧
+					.firmOverview {
+						margin: 0 auto;
+						width: 810px;
+						font-size: 27px;
 						display: flex;
-						width: 90%;
-						margin-top: -10px;
-						justify-content: space-between;
+						padding-bottom: 45px;
 
-						> li {
-							width: 50%;
-							list-style: none;
+						.firmOverview-left {
+							.firmOverview-num-wrap {
+								.firmOverview-num-title {
+									padding-left: 15px;
+									border-left: 6px solid #3779fd;
+									line-height: 27px;
+									margin-top: 35px;
+								}
 
-							> div {
-								margin: 0 auto;
+								.firmOverview-num {
+									font-size: 44px;
+									color: #2c61ca;
+									margin-top: 43px;
+									line-height: 44px;
+									padding-bottom: 10px;
+									font-weight: bold;
+
+									span {
+										color: #fff;
+										font-size: 27px;
+										font-weight: normal;
+										margin-left: 22px;
+									}
+								}
 							}
 
-							> p {
-								text-align: center;
-								color: rgba(255, 255, 255, 0.8);
-								font-size: 12px;
+							.firmOverview-echart-wrap {
+								.firmOverview-echart {
+									width: 300px;
+									height: 300px;
+								}
+							}
+						}
+
+						.firmOverview-right {
+							margin-left: 83px;
+
+							p {
+								padding-left: 15px;
+								border-left: 6px solid #3779fd;
+								line-height: 27px;
+								margin-top: 35px;
+								margin-left: 19px;
 							}
 
-							> p:nth-of-type(1) {
-								font-size: 14px;
-								margin-bottom: 20px;
-							}
+							.firmOverview-right-table {
+								margin-top: 27px;
 
-							> p:nth-of-type(2) {
-								color: #389BFF;
-								font-size: 26px;
-								margin-bottom: 5px;
+								table {
+									width: 422px;
+									text-align: center;
+									font-size: 12px;
+
+									thead {
+										font-size: 17px;
+										color: #3779fd;
+
+										.rank {
+											width: 94px;
+										}
+
+										.score {
+											width: 94px;
+										}
+									}
+
+									tbody {
+										tr:nth-child(odd) {
+											background: #10152c;
+										}
+									}
+								}
 							}
 						}
 					}
-				}
-			}
 
-			.portrait-crowd {
-				min-height: 270px;
-
-				.content {
-					height: calc(100% - 31px);
-					display: flex;
-					align-items: center;
-					justify-content: space-between;
-
-					.portrait {
-						width: 125px;
-						margin: 0 0 0 25px;
-						display: flex;
-						justify-content: space-between;
-
-						img {
-							display: block;
-							height: 61px;
-							margin: 0 auto 13px;
-						}
-
-						p {
-							font-size: 12px;
-							text-align: center;
-							color: rgba(255, 255, 255, 0.6);
-						}
-
-						p:nth-of-type(2) {
-							margin-top: 3px;
-						}
+					.firmProBank-charts {
+						width: 800px;
+						height: 300px;
+						padding-left: 68px;
 					}
 
-					> div:nth-of-type(2) {
-						width: 270px;
-						height: 180px;
+					.capitalScale-charts {
+						width: 800px;
+						height: 300px;
 					}
-				}
-			}
-
-			.channel-proportion {
-				min-height: 273px;
-				margin-bottom: 0;
-
-				.content {
-					height: calc(100% - 31px);
-					display: flex;
-					align-items: center;
 				}
 			}
 		}

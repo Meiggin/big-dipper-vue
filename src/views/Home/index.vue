@@ -9,9 +9,10 @@
       <div id="userMap" class="markerClass" style="height: 100%"></div>
       <!-- 边 -->
       <keep-alive>
-        <BankDataPreview ref="user" :fullscreen="fullscreen"></BankDataPreview>
-        <FirmDataPreview ref="user" :fullscreen="fullscreen"></FirmDataPreview>
+        <BankDataPreview ref="user"></BankDataPreview>
       </keep-alive>
+      <!-- 地图标题 -->
+      <BankBakingPreview></BankBakingPreview>
     </section>
   </div>
 </template>
@@ -19,16 +20,15 @@
 <script>
 import AMapLoader from "@amap/amap-jsapi-loader";
 import BankDataPreview from "./components/BankDataPreview";
-import FirmDataPreview from "./components/FirmDataPreview";
+import BankBakingPreview from "./components/BankBakingPreview";
 import cityJson from "@/utils/jsonData.json";
 export default {
   name: "DataPreview",
-  components: { BankDataPreview ,FirmDataPreview},
+  components: { BankDataPreview, BankBakingPreview },
   data() {
     return {
       active: 2,
       isLoading: false,
-      fullscreen: false,
       height: "",
       cityInfoList: [],
       updateTime: "",
@@ -128,7 +128,6 @@ export default {
           });
           this.mapValue.on("zoomend", (e) => {
             let currentZoom = this.mapValue.getZoom();
-            console.log(currentZoom);
             if (currentZoom <= 10) {
               this.mapValue.clearMap();
               this.districtPolygon(this.ADlist);
@@ -183,9 +182,7 @@ export default {
     },
     polygonClick(polygon) {
       polygon.on("click", (e) => {
-        console.log(1111);
         let overlaysList = this.mapValue.getAllOverlays("polygon");
-        console.log(overlaysList.length);
         if (overlaysList.length != 1) {
           this.mapValue.clearMap();
         }
@@ -193,7 +190,6 @@ export default {
 
         geocoder.getAddress(e.lnglat, (status, result) => {
           if (status === "complete" && result.regeocode) {
-            console.log(result.regeocode.addressComponent.district);
             let item = [{ str: result.regeocode.addressComponent.district }];
             this.districtPolygon(item);
           }
@@ -233,7 +229,6 @@ export default {
           blurRadius: -1,
         });
         this.loca.add(this.bankBranch);
-        console.log(cityJson);
       });
     },
     polygonMouse(polygon) {

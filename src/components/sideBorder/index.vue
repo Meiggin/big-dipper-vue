@@ -4,6 +4,12 @@
     <img class="statusImg2" src="../../assets/border2.png" alt="" />
     <img class="statusImg3" src="../../assets/border3.png" alt="" />
     <img class="statusImg4" src="../../assets/border4.png" alt="" />
+    <div class="sideBorderTitle-warp">
+      <p class="sideBorderTitle1 clear">{{ sideTitle }}</p>
+      <p class="sideBorderTitle2 clear">{{ sideTitle }}</p>
+      <img class="sideBorderImg" src="../../assets/titleShadow.png" alt="" />
+    </div>
+
     <slot name="sideBorderData"></slot>
   </div>
 </template>
@@ -12,7 +18,7 @@
 export default {
   /* eslint-disable */
   name: "DvScrollBoard",
-
+  props: ["sideTitle"],
   data() {
     return {};
   },
@@ -24,13 +30,55 @@ export default {
   position: relative;
   width: 908px;
   color: #fff;
+  min-height: 450px;
+
+  .sideBorderTitle-warp {
+    // width: -webkit-fit-content;
+    display: inline-block;
+    height: 95px;
+    width: 300px;
+    position: relative;
+    background-image: url('../../assets/titleBorder.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    margin-left: 52px;
+
+    p {
+      text-align: center;
+      font-size: 32px;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    .sideBorderImg {
+      width: 100%;
+      position: absolute;
+      bottom: 0px;
+      z-index: 5;
+    }
+  }
+
+  .sideBorderTitle1 {
+    position: absolute;
+    top: 36px;
+    color: #fff;
+    z-index: 2;
+  }
+
+  .sideBorderTitle2 {
+    position: absolute;
+    top: 42px;
+    color: #203f82;
+    z-index: 1;
+  }
 
   .statusImg1 {
     position: absolute;
     left: 0;
     top: 0;
     width: 122px;
-    height: 109px;
+    height: 110px;
   }
 
   .statusImg2 {
@@ -38,7 +86,7 @@ export default {
     right: 0;
     top: 0;
     width: 122px;
-    height: 109px;
+    height: 110px;
   }
 
   .statusImg3 {
@@ -46,7 +94,7 @@ export default {
     left: 0;
     bottom: 0;
     width: 122px;
-    height: 109px;
+    height: 110px;
   }
 
   .statusImg4 {
@@ -54,7 +102,7 @@ export default {
     right: 0;
     bottom: 0;
     width: 122px;
-    height: 109px;
+    height: 110px;
   }
 }
 </style>

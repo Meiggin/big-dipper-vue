@@ -4,7 +4,6 @@
   let screenRatioByDesign = 64 / 27
   function setHtmlFontSize() {
     var screenRatio = docEle.clientWidth / docEle.clientHeight;
-    console.log(screenRatio, screenRatioByDesign)
     var fontSize = (
       screenRatio > screenRatioByDesign
         ? (screenRatioByDesign / screenRatio)
@@ -20,17 +19,19 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import echarts from 'echarts'
+
 import './utils/flexible';
 import './assets/font/css/index.css'
 import {
   loading,
 } from '@jiaminghi/data-view'
 
+import ChartBlock from '@/components/echarts/index.vue'
+Vue.use(ChartBlock)
 Vue.use(loading)
 
 Vue.config.productionTip = false
-Vue.prototype.$echarts = echarts
+
 
 new Vue({
   router,
