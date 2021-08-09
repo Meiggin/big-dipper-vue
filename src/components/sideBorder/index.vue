@@ -9,7 +9,6 @@
       <p class="sideBorderTitle2 clear">{{ sideTitle }}</p>
       <img class="sideBorderImg" src="../../assets/titleShadow.png" alt="" />
     </div>
-
     <slot name="sideBorderData"></slot>
   </div>
 </template>
