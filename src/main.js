@@ -24,14 +24,16 @@ import './utils/flexible';
 import './assets/font/css/index.css'
 import {
   loading,
+  digitalFlop
 } from '@jiaminghi/data-view'
 
 import ChartBlock from '@/components/echarts/index.vue'
 Vue.use(ChartBlock)
 Vue.use(loading)
+Vue.use(digitalFlop)
 
 Vue.config.productionTip = false
-
+Vue.prototype.bus = new Vue()
 
 new Vue({
   router,

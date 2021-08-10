@@ -22,29 +22,17 @@ import AMapLoader from "@amap/amap-jsapi-loader";
 import BankDataPreview from "./components/BankDataPreview";
 import BankBakingPreview from "./components/BankBakingPreview";
 import cityJson from "@/utils/jsonData.json";
+
 export default {
   name: "DataPreview",
   components: { BankDataPreview, BankBakingPreview },
   data() {
     return {
-      active: 2,
       isLoading: false,
       height: "",
-      cityInfoList: [],
-      updateTime: "",
-      bubbleData: {
-        cityCode: "",
-        cityName: "",
-        proportion: "",
-        communityCount: "",
-        openUserCount: "",
-        iotDoorControlCount: "",
-      },
       colors: {},
       overlaysList: [],
-      overlayGroup: null,
       district: null,
-      overlayGroups: null,
       AMap: null,
       ADlist: [
         { str: "上城区" },
@@ -62,7 +50,9 @@ export default {
   },
   mounted() {
     this.initUserMap();
+
     this.setElementHeight();
+
     this.showLoading();
     window.addEventListener("resize", this.setElementHeight);
     this.$once("hook:beforeDestroy", () => {
@@ -87,7 +77,6 @@ export default {
       }, 100);
     },
     // 用户地图
-
     async initUserMap() {
       AMapLoader.load({
         key: "7613cd9072618326abc496f33fa660f1",
@@ -154,8 +143,8 @@ export default {
                 strokeColor: "#4d4d4d",
                 cursor: "pointer",
                 path: bounds[x],
-                fillOpacity: 0.2,
-                fillColor: "#000",
+                fillOpacity: 0.6,
+                fillColor: "#38448e",
                 id: i,
                 strokeStyle: "",
               });
@@ -177,9 +166,7 @@ export default {
         });
       }
     },
-    regeoCode() {
-      // this.mapValue = new this.AMap.Geocoder
-    },
+
     polygonClick(polygon) {
       polygon.on("click", (e) => {
         let overlaysList = this.mapValue.getAllOverlays("polygon");
@@ -234,14 +221,14 @@ export default {
     polygonMouse(polygon) {
       polygon.on("mouseover", () => {
         polygon.setOptions({
-          fillOpacity: 0.2,
-          fillColor: "#3779fd",
+          fillOpacity: 0.3,
+          fillColor: "#6f96db",
         });
       });
       polygon.on("mouseout", () => {
         polygon.setOptions({
-          fillOpacity: 0.2,
-          fillColor: "#000",
+          fillOpacity: 0.6,
+          fillColor: "#38448e",
         });
       });
     },

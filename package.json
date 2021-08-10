@@ -14,10 +14,12 @@
     "@antv/l7-draw": "^2.4.10",
     "@antv/l7-maps": "^2.2.41",
     "@jiaminghi/data-view": "^2.10.0",
+    "animate.css": "^4.1.1",
     "animejs": "^3.2.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "echarts": "^5.1.2",
+    "qs": "^6.10.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0"
   },

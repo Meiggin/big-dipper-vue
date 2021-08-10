@@ -12,14 +12,17 @@
           </p>
           <p class="title-bank-add">
             当年新增
-            <span>2家👆</span>
+            <span>2家⬆</span>
           </p>
         </div>
         <div class="status-details">
           <div class="dataSiderList">
-            <sideBorder sideTitle="杭州市银行增长趋势">
+            <sideBorder :sideTitle="bankAddList.sideTitle">
               <div slot="sideBorderData" class="bankAddLine-charts chartsBlock">
-                <chart-block :option="bankAddList"></chart-block>
+                <chart-block
+                  :option="bankAddList"
+                  ref="bankAddList"
+                ></chart-block>
               </div>
             </sideBorder>
             <sideBorder sideTitle="各区银行分布情况">
@@ -27,7 +30,10 @@
                 slot="sideBorderData"
                 class="bankDistributed-charts chartsBlock"
               >
-                <chart-block :option="bankDistributed"></chart-block>
+                <chart-block
+                  :option="bankDistributed"
+                  ref="bankDistributed"
+                ></chart-block>
               </div>
             </sideBorder>
             <sideBorder sideTitle="各类银行占比情况">
@@ -52,14 +58,19 @@
                 <div class="firmOverview-left">
                   <div class="firmOverview-num-wrap">
                     <p class="firmOverview-num-title">企业总数（杭州市）</p>
-                    <p class="firmOverview-num">14558<span>所</span></p>
+                    <p class="firmOverview-num">
+                      {{ firmOverview.companyNum }}
+                      <span>所</span>
+                    </p>
                   </div>
                   <div class="firmOverview-echart-wrap">
                     <div class="firmOverview-num-wrap">
                       <p class="firmOverview-num-title">注册资本占比</p>
                     </div>
                     <div class="firmOverview-echart">
-                      <chart-block :option="firmPercentageList"></chart-block>
+                      <chart-block
+                        :option="firmOverview.firmPercentageList"
+                      ></chart-block>
                     </div>
                   </div>
                 </div>
@@ -108,15 +119,27 @@
 
 <script>
 import sideBorder from "@/components/sideBorder/index";
-
+import {
+  getBankNumByStartTime,
+  getAreaBankNumber,
+  getBankNumRate,
+  getCompanyOverview,
+  getCompanyAccountRate,
+} from "@/api/index.js";
 export default {
   name: "BankDataPreview",
   components: { sideBorder },
-  props: {},
   data() {
     return {
+      bankStr: "杭州市银行",
+      //搜索集合
+      searchList: {
+        bankType: null,
+      },
       //银行增长
+
       bankAddList: {
+        sideTitle: "杭州市银行增长趋势",
         xAxis: {
           type: "category",
           data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -157,31 +180,32 @@ export default {
           },
         },
         legend: {
-          data: ["国有银行", "村镇银行", "股份银行", "城市银行"],
-          orient: "horizontal",
-          right: 0,
-          width: 209,
-          itemWidth: 33,
-          itemHeight: 16,
-          itemStyle: {
-            width: "50px",
-            opacity: "0.6",
-          },
-          textStyle: {
-            color: "#b3b3b3",
-            fontSize: "13px",
-          },
+          // data: ["国有银行", "村镇银行", "股份银行", "城市银行"],
+          // orient: "horizontal",
+          // right: 0,
+          // width: 209,
+          // itemWidth: 33,
+          // itemHeight: 16,
+          // itemStyle: {
+          //   width: "50px",
+          //   opacity: "0.6",
+          // },
+          // textStyle: {
+          //   color: "#b3b3b3",
+          //   fontSize: "13px",
+          // },
         },
         grid: {
           left: "0",
           right: "0",
-          bottom: "3%",
+          top: "4%",
+          bottom: "0",
           containLabel: true,
         },
         xAxis: [
           {
             type: "category",
-            data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+            data: [],
           },
         ],
         yAxis: [
@@ -190,42 +214,42 @@ export default {
           },
         ],
         series: [
-          {
-            name: "国有银行",
-            type: "bar",
-            stack: "广告",
-            emphasis: {
-              focus: "series",
-            },
-            data: [320, 332, 301, 334, 390, 330, 320],
-          },
-          {
-            name: "村镇银行",
-            type: "bar",
-            stack: "广告",
-            emphasis: {
-              focus: "series",
-            },
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: "股份银行",
-            type: "bar",
-            stack: "广告",
-            emphasis: {
-              focus: "series",
-            },
-            data: [220, 182, 191, 234, 290, 330, 310],
-          },
-          {
-            name: "城市银行",
-            type: "bar",
-            stack: "广告",
-            emphasis: {
-              focus: "series",
-            },
-            data: [150, 232, 201, 154, 190, 330, 410],
-          },
+          // {
+          //   name: "国有银行",
+          //   type: "bar",
+          //   stack: "广告",
+          //   emphasis: {
+          //     focus: "series",
+          //   },
+          //   data: [320, 332, 301, 334, 390, 330, 320],
+          // },
+          // {
+          //   name: "村镇银行",
+          //   type: "bar",
+          //   stack: "广告",
+          //   emphasis: {
+          //     focus: "series",
+          //   },
+          //   data: [120, 132, 101, 134, 90, 230, 210],
+          // },
+          // {
+          //   name: "股份银行",
+          //   type: "bar",
+          //   stack: "广告",
+          //   emphasis: {
+          //     focus: "series",
+          //   },
+          //   data: [220, 182, 191, 234, 290, 330, 310],
+          // },
+          // {
+          //   name: "城市银行",
+          //   type: "bar",
+          //   stack: "广告",
+          //   emphasis: {
+          //     focus: "series",
+          //   },
+          //   data: [150, 232, 201, 154, 190, 330, 410],
+          // },
         ],
       },
       //银行占比情况
@@ -237,13 +261,6 @@ export default {
           bottom: "0",
           containLabel: true,
         },
-        title: {
-          left: "center",
-          top: 20,
-          textStyle: {
-            color: "#ccc",
-          },
-        },
 
         tooltip: {
           trigger: "item",
@@ -252,17 +269,15 @@ export default {
         visualMap: {
           show: false,
           min: 80,
-          max: 600,
+          max: 2000,
           inRange: {
             colorLightness: [0, 1],
           },
         },
         series: [
           {
-            name: "访问来源",
             type: "pie",
-            radius: "55%",
-            center: ["50%", "50%"],
+            radius: "80%",
             data: [
               { value: 335, name: "国有银行" },
               { value: 310, name: "股份银行" },
@@ -297,50 +312,42 @@ export default {
           },
         ],
       },
-      //企业总览
-      firmPercentageList: {
-        tooltip: {
-          trigger: "item",
-        },
-        grid: {
-          left: "0",
-          right: "0",
-          bottom: "0",
-          top: 0,
-        },
-        legend: {
-          top: "5%",
-          left: "center",
-        },
-        series: [
-          {
-            name: "访问来源",
-            type: "pie",
-            radius: ["40%", "70%"],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: "center",
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: "40",
-                fontWeight: "bold",
-              },
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [
-              { value: 1048 },
-              { value: 735 },
-              { value: 580 },
-              { value: 484 },
-              { value: 300 },
-            ],
+      //企业总览注册资本占比
+      firmOverview: {
+        companyNum: "1500",
+        firmPercentageList: {
+          tooltip: {
+            trigger: "item",
+            confine: true,
           },
-        ],
+          grid: {
+            left: "0",
+            right: "0",
+            bottom: "0",
+            top: 0,
+          },
+          series: [
+            {
+              type: "pie",
+              radius: ["40%", "70%"],
+              avoidLabelOverlap: false,
+              label: {
+                show: false,
+                position: "center",
+              },
+              labelLine: {
+                show: false,
+              },
+              data: [
+                { value: 1048 },
+                { value: 735 },
+                { value: 580 },
+                { value: 484 },
+                { value: 300 },
+              ],
+            },
+          ],
+        },
       },
       //企业开户行占比
       firmProBank: {
@@ -357,7 +364,7 @@ export default {
         series: [
           {
             type: "pie",
-            radius: "100%",
+            radius: "90%",
             roseType: "area",
             label: {
               show: false,
@@ -410,15 +417,7 @@ export default {
         "10p",
         "11p",
       ],
-      capitalScaleDays: [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-      ],
+      capitalScaleDays: ["1", "2", "3", "4", "5", "6", "7"],
       capitalScaleData: [
         [0, 0, 5],
         [0, 1, 1],
@@ -605,6 +604,7 @@ export default {
   },
   mounted() {
     // this.$refs.bankAddLine.setOption(this.option);
+    this.getData();
     this.capitalScaleDays.forEach((day, idx) => {
       this.capitalScale.title.push({
         textBaseline: "middle",
@@ -632,7 +632,7 @@ export default {
         },
       });
     });
-    let data = this.capitalScaleData
+    let data = this.capitalScaleData;
     data.forEach((dataItem) => {
       this.capitalScale.series[dataItem[0]].data.push([
         dataItem[1],
@@ -640,7 +640,92 @@ export default {
       ]);
     });
   },
-  methods: {},
+  methods: {
+    ifBankTitle(value) {
+      if (value == 0) {
+        this.bankStr = "国有银行";
+      } else if (value == 1) {
+        this.bankStr = "股份银行";
+      } else if (value == 2) {
+        this.bankStr = "城市银行";
+      } else if (value == 3) {
+        this.bankStr = "村镇银行";
+      }
+    },
+    getData() {
+      this.bus.$on("bankType", (val) => {
+        console.log(val);
+        if (this.searchList.bankType != val) {
+          this.searchList.bankType = val;
+          this.ifBankTitle(this.searchList.bankType);
+          this.getBankNumByStartTime();
+          this.getAreaBankNumber();
+          this.getBankNumRate();
+          // 右侧
+          this.getCompanyOverview();
+          this.getCompanyAccountRate();
+        } else {
+          this.searchList.bankType = val;
+        }
+      });
+      // 左侧
+      this.getBankNumByStartTime();
+      this.getAreaBankNumber();
+      this.getBankNumRate();
+      // 右侧
+      this.getCompanyOverview();
+      this.getCompanyAccountRate();
+    },
+    getBankNumByStartTime() {
+      let data = this.searchList;
+      getBankNumByStartTime(data).then((res) => {
+        this.bankAddList.xAxis = res.data.xAxis;
+        this.bankAddList.series = res.data.series;
+        this.bankAddList.series[0].type = "line";
+        this.bankAddList.sideTitle = this.bankStr + "增长趋势";
+      });
+    },
+    getAreaBankNumber() {
+      let data = this.searchList;
+      getAreaBankNumber(data).then((res) => {
+        this.bankDistributed.xAxis = res.data.xAxis;
+        this.bankDistributed.series = res.data.series;
+      });
+    },
+    getBankNumRate() {
+      getBankNumRate().then((res) => {
+        // bankProportion;
+        this.bankProportion.series[0].data = res.data.data.sort(function (
+          a,
+          b
+        ) {
+          return a.value - b.value;
+        });
+      });
+    },
+    getCompanyOverview() {
+      getCompanyOverview().then((res) => {
+        // this.firmOverview.companyNum.number = [];
+        this.firmOverview.companyNum = res.data.companyNum;
+        for (let i in res.data.rate) {
+          res.data.rate[i].value = res.data.rate[i].num;
+        }
+        this.firmOverview.firmPercentageList.series[0].data = res.data.rate;
+      });
+    },
+    getCompanyAccountRate() {
+      getCompanyAccountRate().then((res) => {
+        console.log(res);
+        for (let i in res.data) {
+          res.data[i].value = res.data[i].num;
+        }
+        this.firmProBank.series[0].data = res.data;
+      });
+    },
+  },
+  beforeDestroy() {
+    this.bus.$off(["isLeft"]);
+  },
 };
 </script>
 

@@ -28,7 +28,6 @@
 	}
 
 	.bank-baking-preview {
-		width: 750px;
 		height: 260px;
 		position: absolute;
 		top: 102px;
@@ -40,6 +39,13 @@
 			font-size: 61px;
 			letter-spacing: 7px;
 			margin-left: 20px;
+			font-weight: 400;
+
+			span {
+				float: left;
+				margin-left: -50px;
+				cursor: pointer;
+			}
 		}
 
 		.bank-list {
@@ -173,20 +179,23 @@
 					.bankAddLine-charts {
 						width: 800px;
 						height: 250px;
+						padding-bottom: 30px;
 					}
 
 					.bankDistributed-charts {
 						width: 800px;
-						height: 400px;
-						position: absolute;
-						top: 0;
-						left: 50%;
-						transform: translate(-50%, 0);
+						height: 350px;
+						padding-bottom: 50px;
+						// position: absolute;
+						// top: 0;
+						// left: 50%;
+						// transform: translate(-50%, 0);
 					}
 
 					.bankProportion-charts {
 						width: 800px;
-						height: 300px;
+						height: 250px;
+						padding-bottom: 40px;
 					}
 
 					// 右侧
@@ -277,11 +286,13 @@
 						width: 800px;
 						height: 300px;
 						padding-left: 68px;
+						padding-bottom: 30px;
 					}
 
 					.capitalScale-charts {
 						width: 800px;
 						height: 300px;
+						padding-bottom: 50px;
 					}
 				}
 			}

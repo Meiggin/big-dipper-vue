@@ -30,7 +30,6 @@ export default {
   position: relative;
   width: 908px;
   color: #fff;
-  min-height: 450px;
 
   .sideBorderTitle-warp {
     // width: -webkit-fit-content;
