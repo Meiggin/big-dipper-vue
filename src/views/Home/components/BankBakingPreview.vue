@@ -1,7 +1,9 @@
 <template>
+  <!--  -->
   <div class="bank-baking-preview">
     <h3 ref="bankTitle">
-      <span @click="back()" v-if="showSpan">&lt;</span>{{ bankNmae + title }}
+      <div @click="back()" v-if="showSpan"></div>
+      {{ bankNmae + title }}
     </h3>
 
     <div class="bank-list">
@@ -16,10 +18,9 @@
 </template>
 
 <script>
-import { translate } from "../../../utils/anime.js";
 export default {
   name: "BankBaking",
-
+  props: ["isLoading"],
   data() {
     return {
       bankNmae: "杭州银行",
@@ -31,10 +32,11 @@ export default {
   mounted() {},
   methods: {
     back() {
+      this.$emit("loading", true);
       this.showSpan = false;
       this.bankNmae = "杭州银行";
-      translate(this.$refs.bankTitle);
       this.bus.$emit("bankType", null);
+      this.bus.$emit("actionFlow", 0);
     },
     ifBankTitle(value) {
       if (value == 0) {
@@ -48,9 +50,11 @@ export default {
       }
     },
     handleClick(e) {
+      this.$emit("loading", true);
       this.showSpan = true;
       this.ifBankTitle(e);
       this.bus.$emit("bankType", e);
+      this.bus.$emit("actionFlow", 1);
     },
   },
 };

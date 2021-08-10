@@ -17,7 +17,7 @@
         </div>
         <div class="status-details">
           <div class="dataSiderList">
-            <sideBorder :sideTitle="bankAddList.sideTitle">
+            <sideBorder :sideTitle="`${bankAddList.sideTitle}增长趋势`">
               <div slot="sideBorderData" class="bankAddLine-charts chartsBlock">
                 <chart-block
                   :option="bankAddList"
@@ -25,7 +25,7 @@
                 ></chart-block>
               </div>
             </sideBorder>
-            <sideBorder sideTitle="各区银行分布情况">
+            <sideBorder sideTitle="各区银行分布情况" v-if="actionFlow == 0">
               <div
                 slot="sideBorderData"
                 class="bankDistributed-charts chartsBlock"
@@ -34,6 +34,11 @@
                   :option="bankDistributed"
                   ref="bankDistributed"
                 ></chart-block>
+              </div>
+            </sideBorder>
+            <sideBorder sideTitle="各银行概况" v-if="actionFlow == 1">
+              <div slot="sideBorderData" class="bankKind-charts chartsBlock">
+                <chart-block :option="bankKind"></chart-block>
               </div>
             </sideBorder>
             <sideBorder sideTitle="各类银行占比情况">
@@ -119,6 +124,7 @@
 
 <script>
 import sideBorder from "@/components/sideBorder/index";
+const echarts = require("echarts");
 import {
   getBankNumByStartTime,
   getAreaBankNumber,
@@ -131,17 +137,23 @@ export default {
   components: { sideBorder },
   data() {
     return {
+      actionFlow: 0,
       bankStr: "杭州市银行",
       //搜索集合
       searchList: {
         bankType: null,
       },
       //银行增长
-
       bankAddList: {
-        sideTitle: "杭州市银行增长趋势",
+        sideTitle: "杭州市银行",
         xAxis: {
           type: "category",
+          axisLine: {
+            lineStyle: {
+              color: "#343434",
+            },
+          },
+
           data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         },
         itemStyle: {
@@ -156,6 +168,13 @@ export default {
         },
         yAxis: {
           type: "value",
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: "#343434",
+              type: "solid",
+            },
+          },
         },
         grid: {
           left: 30,
@@ -211,45 +230,126 @@ export default {
         yAxis: [
           {
             type: "value",
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#343434",
+                type: "solid",
+              },
+            },
           },
         ],
         series: [
-          // {
-          //   name: "国有银行",
-          //   type: "bar",
-          //   stack: "广告",
-          //   emphasis: {
-          //     focus: "series",
-          //   },
-          //   data: [320, 332, 301, 334, 390, 330, 320],
-          // },
-          // {
-          //   name: "村镇银行",
-          //   type: "bar",
-          //   stack: "广告",
-          //   emphasis: {
-          //     focus: "series",
-          //   },
-          //   data: [120, 132, 101, 134, 90, 230, 210],
-          // },
-          // {
-          //   name: "股份银行",
-          //   type: "bar",
-          //   stack: "广告",
-          //   emphasis: {
-          //     focus: "series",
-          //   },
-          //   data: [220, 182, 191, 234, 290, 330, 310],
-          // },
-          // {
-          //   name: "城市银行",
-          //   type: "bar",
-          //   stack: "广告",
-          //   emphasis: {
-          //     focus: "series",
-          //   },
-          //   data: [150, 232, 201, 154, 190, 330, 410],
-          // },
+          {
+            name: "国有银行",
+            type: "bar",
+            stack: "广告",
+            emphasis: {
+              focus: "series",
+            },
+            data: [320, 332, 301, 334, 390, 330, 320],
+          },
+          {
+            name: "村镇银行",
+            type: "bar",
+            stack: "广告",
+            emphasis: {
+              focus: "series",
+            },
+            data: [120, 132, 101, 134, 90, 230, 210],
+          },
+          {
+            name: "股份银行",
+            type: "bar",
+            stack: "广告",
+            emphasis: {
+              focus: "series",
+            },
+            data: [220, 182, 191, 234, 290, 330, 310],
+          },
+          {
+            name: "城市银行",
+            type: "bar",
+            stack: "广告",
+            emphasis: {
+              focus: "series",
+            },
+            data: [150, 232, 201, 154, 190, 330, 410],
+          },
+        ],
+      },
+      //各银行概况
+      bankKind: {
+        grid: {
+          left: "1%",
+          right: "1%",
+          top: "0",
+          bottom: "0",
+          containLabel: true,
+        },
+        xAxis: {
+          type: "value",
+
+          axisTick: {
+            show: false,
+          },
+          splitLine: {
+            show: false,
+          },
+          axisLine: {
+            show: false,
+          },
+          z: 10,
+        },
+        yAxis: {
+          type: "category",
+          data: ["A", "B", "C", "D", "E"],
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            textStyle: {
+              color: "#999",
+            },
+          },
+        },
+        dataZoom: [
+          {
+            type: "inside",
+          },
+        ],
+        series: [
+          {
+            type: "bar",
+            showBackground: true,
+            barWidth: 10,
+            itemStyle: {
+              emphasis: {
+                barBorderRadius: 7,
+              },
+              normal: {
+                barBorderRadius: 7,
+              },
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: "#83bff6" },
+                { offset: 0.5, color: "#188df0" },
+                { offset: 1, color: "#188df0" },
+              ]),
+            },
+            emphasis: {
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "#2378f7" },
+                  { offset: 0.7, color: "#2378f7" },
+                  { offset: 1, color: "#83bff6" },
+                ]),
+              },
+            },
+            data: [220, 182, 191, 234, 290, 330, 310, 123, 442],
+          },
         ],
       },
       //银行占比情况
@@ -654,19 +754,26 @@ export default {
     },
     getData() {
       this.bus.$on("bankType", (val) => {
-        console.log(val);
-        if (this.searchList.bankType != val) {
-          this.searchList.bankType = val;
-          this.ifBankTitle(this.searchList.bankType);
-          this.getBankNumByStartTime();
-          this.getAreaBankNumber();
-          this.getBankNumRate();
-          // 右侧
-          this.getCompanyOverview();
-          this.getCompanyAccountRate();
+        if (val != null) {
+          if (this.searchList.bankType != val) {
+            this.searchList.bankType = val;
+            this.ifBankTitle(this.searchList.bankType);
+            this.bankAddList.sideTitle = this.bankStr;
+            this.getBankNumByStartTime();
+            this.getAreaBankNumber();
+            this.getBankNumRate();
+            // 右侧
+            this.getCompanyOverview();
+            this.getCompanyAccountRate();
+          } else {
+            this.searchList.bankType = val;
+          }
         } else {
-          this.searchList.bankType = val;
+          this.bankAddList.sideTitle = "杭州市银行";
         }
+      });
+      this.bus.$on("actionFlow", (val) => {
+        this.actionFlow = val;
       });
       // 左侧
       this.getBankNumByStartTime();

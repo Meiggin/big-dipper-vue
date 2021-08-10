@@ -21,5 +21,7 @@ html, body, #app {
   padding: 0;
   margin: 0;
   font-family: SourceHanSansCN;
+  caret-color: rgba(0, 0, 0, 0);
+  cursor: default;
 }
 </style>

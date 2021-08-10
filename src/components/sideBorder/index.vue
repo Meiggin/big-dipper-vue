@@ -34,7 +34,7 @@ export default {
     // width: -webkit-fit-content;
     display: inline-block;
     height: 95px;
-    width: 300px;
+    min-width: 300px;
     position: relative;
     background-image: url('../../assets/titleBorder.png');
     background-size: contain;

@@ -13,7 +13,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.9);
+		background: rgba(0, 0, 0, 0.999);
 		z-index: 10;
 
 		>>> .loading-tip {
@@ -41,9 +41,15 @@
 			margin-left: 20px;
 			font-weight: 400;
 
-			span {
+			div {
+				height: 20px;
+				width: 20px;
+				border-width: 0 0 6px 6px;
+				border-color: #fff;
+				border-style: solid;
+				transform: rotate(45deg);
 				float: left;
-				margin-left: -50px;
+				margin: 35px 35px 0 -60px;
 				cursor: pointer;
 			}
 		}
@@ -195,6 +201,12 @@
 					.bankProportion-charts {
 						width: 800px;
 						height: 250px;
+						padding-bottom: 40px;
+					}
+
+					.bankKind-charts {
+						width: 800px;
+						height: 350px;
 						padding-bottom: 40px;
 					}
 

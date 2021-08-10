@@ -8,11 +8,18 @@
       <!-- 地图 -->
       <div id="userMap" class="markerClass" style="height: 100%"></div>
       <!-- 边 -->
-      <keep-alive>
-        <BankDataPreview ref="user"></BankDataPreview>
-      </keep-alive>
+      <transition
+        enter-active-class="animated fadeOut"
+        leave-active-class="animated fadeOut"
+      >
+        <BankDataPreview v-if="action == 0"></BankDataPreview>
+        <BankInfo v-if="action == 1"></BankInfo>
+      </transition>
       <!-- 地图标题 -->
-      <BankBakingPreview></BankBakingPreview>
+      <BankBakingPreview
+        :isLoading="isLoading"
+        @loading="titleLoading"
+      ></BankBakingPreview>
     </section>
   </div>
 </template>
@@ -21,13 +28,16 @@
 import AMapLoader from "@amap/amap-jsapi-loader";
 import BankDataPreview from "./components/BankDataPreview";
 import BankBakingPreview from "./components/BankBakingPreview";
+import BankInfo from "./components/BankInfo";
+
 import cityJson from "@/utils/jsonData.json";
 
 export default {
   name: "DataPreview",
-  components: { BankDataPreview, BankBakingPreview },
+  components: { BankDataPreview, BankBakingPreview, BankInfo },
   data() {
     return {
+      action: 0,
       isLoading: false,
       height: "",
       colors: {},
@@ -61,12 +71,15 @@ export default {
   },
   methods: {
     // 关闭延时器
+    titleLoading() {
+      this.showLoading();
+    },
     showLoading() {
       this.isLoading = true;
       this.timer = setTimeout(() => {
         this.isLoading = false;
         window.clearTimeout(this.timer);
-      }, 1500);
+      }, 500);
     },
     // 设置DOM高度
     setElementHeight() {
@@ -121,6 +134,7 @@ export default {
               this.mapValue.clearMap();
               this.districtPolygon(this.ADlist);
               this.loca.remove(this.bankBranch);
+              this.action = 0;
             }
           });
         })
@@ -155,16 +169,17 @@ export default {
               //   polygon.off("mouseout", this.polygonMouseout(polygon));
               if (item.length == 1) {
                 this.polygonClick(polygon);
+                console.log('1');
               } else {
                 this.polygonMouse(polygon);
                 this.polygonClick(polygon);
               }
               // }
             }
-            // this.mapValue.setFitView();
           }
         });
       }
+      this.mapValue.setFitView();
     },
 
     polygonClick(polygon) {
@@ -216,6 +231,17 @@ export default {
           blurRadius: -1,
         });
         this.loca.add(this.bankBranch);
+        console.log(this.bankBranch, this.loca);
+        this.mapValue.on("click", (e) => {
+          const feat = this.bankBranch.queryFeature(e.pixel.toArray());
+          // geocoder.getAddress(feat.coordinates, (status, result) => {
+          //   if (status === "complete" && result.regeocode) {
+          //     console.log(result);
+          //   }
+          // });
+          console.log(e);
+          this.action = 1;
+        });
       });
     },
     polygonMouse(polygon) {

@@ -26,7 +26,6 @@ import {
   loading,
   digitalFlop
 } from '@jiaminghi/data-view'
-
 import ChartBlock from '@/components/echarts/index.vue'
 Vue.use(ChartBlock)
 Vue.use(loading)
