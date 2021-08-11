@@ -24,44 +24,32 @@
               </div>
             </sideBorder>
             <sideBorder sideTitle="企业潜力分析">
-              <div slot="sideBorderData" class="bank-finance-info">
-                <div class="bank-deposit">
-                  <p class="bank-deposit-title">本月存款额</p>
-                  <div class="bank-deposit-block-wrap">
-                    <p>162587<span>万元</span></p>
-                    <div class="bank-deposit-block"></div>
-                  </div>
-                  <p class="bank-deposit-info-title">
-                    <span>本月存款增长额</span>
-                    <span class="bank-deposit-info-title-raio"
-                      >本月/上月占比</span
-                    >
-                  </p>
-                  <div class="bank-deposit-info">
-                    <p>
-                      11257
-                      <span>万元</span>
-                    </p>
-                    <p>110.27<span> %</span></p>
+              <div slot="sideBorderData" class="enterprise-potential-analysis">
+                <div class="firmPotential-top">
+                  <div class="relation-echarts"></div>
+                  <div class="relation-gauge">
+                    <div class="relation-gauge-top">
+                      <p class="line-title">注册资本排名(同行业)</p>
+                      <chart-block :option="industryEchart"></chart-block>
+                    </div>
+                    <div class="relation-gauge-bottom">
+                      <p class="line-title">注册资本排名(全市)</p>
+                      <chart-block :option="urbanEchart"></chart-block>
+                    </div>
                   </div>
                 </div>
-                <div class="bank-loan">
-                  <p class="bank-loan-title">本月贷款额</p>
-                  <div class="bank-loan-block-wrap">
-                    <p>162587<span>万元</span></p>
-                    <div class="bank-loan-block"></div>
+
+                <div class="firmPotential-center">
+                  <div class="firmPotential-center-top">
+                    <p class="line-title">融资情况</p>
                   </div>
-                  <p class="bank-loan-info-title">
-                    <span>本月贷款增长额</span>
-                    <span class="bank-loan-info-title-raio">本月/上月占比</span>
-                  </p>
-                  <div class="bank-loan-info">
-                    <p>
-                      11257
-                      <span>万元</span>
-                    </p>
-                    <p>110.27<span> %</span></p>
+                  <div class="firmPotential-center-bottom">
+                    <p class="line-title">同业地位</p>
                   </div>
+                </div>
+
+                <div class="firmPotential-bottom">
+                  <p class="line-title">股东认缴出资占比排名</p>
                 </div>
               </div>
             </sideBorder>
@@ -75,40 +63,25 @@
         <div class="status-details">
           <div class="dataSiderList">
             <sideBorder sideTitle="企业评分">
-              <div slot="sideBorderData" class="firmOverview">
-                <div class="firmOverview-left">
-                  <div class="firmOverview-num-wrap">
-                    <p class="firmOverview-num-title">企业总数（杭州市）</p>
-                    <p class="firmOverview-num">
-                      {{ firmOverview.companyNum }}
-                      <span>所</span>
-                    </p>
-                  </div>
-                  <div class="firmOverview-echart-wrap">
-                    <div class="firmOverview-num-wrap">
-                      <p class="firmOverview-num-title">注册资本占比</p>
-                    </div>
-                    <div class="firmOverview-echart">
-                      <chart-block
-                        :option="firmOverview.firmPercentageList"
-                      ></chart-block>
-                    </div>
-                  </div>
+              <div slot="sideBorderData" class="firmScore">
+                <div class="firmScore-left-wrap">
+                  <div class="firmScore-left"></div>
+                  <p>浙江康旭科技评分表</p>
                 </div>
-                <div class="firmOverview-right">
-                  <p>TOP10企业</p>
+
+                <div class="firmScore-right">
                   <div class="firmOverview-right-table">
                     <table>
                       <thead>
                         <tr>
-                          <th class="rank">排名</th>
-                          <th>名称</th>
-                          <th class="score">评分</th>
+                          <th class="rank">维度</th>
+                          <th>评分</th>
+                          <th class="score">排名</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(item, index) in frimData" :key="index">
-                          <td>{{ index + 1 }}</td>
+                        <tr v-for="(item, index) in dimensionData" :key="index">
+                          <td>{{ item.dimension }}</td>
                           <td>{{ item.name }}</td>
                           <td>{{ item.value }}</td>
                         </tr>
@@ -119,69 +92,35 @@
               </div>
             </sideBorder>
             <sideBorder sideTitle="企业产品信息">
-              <div slot="sideBorderData" class="firmOverview">
-                <div class="firmOverview-left">
-                  <div class="firmOverview-num-wrap">
-                    <p class="firmOverview-num-title">企业总数（杭州市）</p>
-                    <p class="firmOverview-num">
-                      {{ firmOverview.companyNum }}
-                      <span>所</span>
-                    </p>
-                  </div>
-                  <div class="firmOverview-echart-wrap">
-                    <div class="firmOverview-num-wrap">
-                      <p class="firmOverview-num-title">注册资本占比</p>
-                    </div>
-                    <div class="firmOverview-echart">
-                      <chart-block
-                        :option="firmOverview.firmPercentageList"
-                      ></chart-block>
-                    </div>
-                  </div>
-                </div>
-                <div class="firmOverview-right">
-                  <p>TOP10企业</p>
-                  <div class="firmOverview-right-table">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th class="rank">排名</th>
-                          <th>名称</th>
-                          <th class="score">评分</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(item, index) in frimData" :key="index">
-                          <td>{{ index + 1 }}</td>
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.value }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </sideBorder>
-            <sideBorder sideTitle="企业经营范围信息">
-              <div slot="sideBorderData" class="surrounding-charts chartsBlock">
-                <p>TOP10企业</p>
-                <div class="surrounding-right-table">
+              <div slot="sideBorderData" class="firmProduct">
+                <div class="firmProduct-table">
                   <table>
                     <thead>
                       <tr>
                         <th>公司名称</th>
-                        <th>所属行业</th>
-                        <th>公司地址</th>
+                        <th>项目名称</th>
+                        <th>成立时间</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item, index) in frimSurrounding" :key="index">
+                      <tr v-for="(item, index) in firmProductData" :key="index">
                         <td>{{ index + 1 }}</td>
                         <td>{{ item.name }}</td>
                         <td>{{ item.value }}</td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </sideBorder>
+            <sideBorder sideTitle="企业经营范围信息">
+              <div slot="sideBorderData" class="business-scope">
+                <div class="business-block">
+                  <p>
+                    经营范围是指国家允许企业生产和经营的商品类别、品种及服务项目，反映企业业务活动的内容和生产经营方向，是企业业务活动范围的法律界限，体现企业民事权利能力和行为能力的核心内容。
+                    简单来说，经营范围是指企业可以从事的生产经营与服务项目，是进行公司注册申请时的必填项。
+                    经营范围是指国家允许企业生产和经营的商品类别、品种及服务项目，反映企业业务活动的内容和生产经营方向。
+                  </p>
                 </div>
               </div>
             </sideBorder>
@@ -200,140 +139,118 @@ export default {
   components: { sideBorder },
   data() {
     return {
-      depositTrendEchart: {
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        },
-
-        yAxis: {
-          type: "value",
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#343434",
-              type: "solid",
-            },
-          },
-        },
-        grid: {
-          left: "0",
-          right: "3%",
-          top: "5%",
-          bottom: "0",
-          containLabel: true,
-        },
+      dimensionData: [
+        { name: "1", value: "100", dimension: "规模" },
+        { name: "1", value: "100", dimension: "风险" },
+        { name: "1", value: "100", dimension: "实力" },
+        { name: "1", value: "100", dimension: "行业" },
+        { name: "1", value: "100", dimension: "潜力" },
+        { name: "1", value: "100", dimension: "综合" },
+      ],
+      firmProductData: [
+        { name: "1", value: "100", dimension: "规模" },
+        { name: "1", value: "100", dimension: "风险" },
+        { name: "1", value: "100", dimension: "实力" },
+        { name: "1", value: "100", dimension: "行业" },
+        { name: "1", value: "100", dimension: "潜力" },
+        { name: "1", value: "100", dimension: "综合" },
+      ],
+      industryEchart: {
         series: [
           {
-            name: "贷款",
-            type: "line",
-            stack: "总量",
-            areaStyle: {},
-            emphasis: {
-              focus: "series",
+            startAngle: 180, // 仪表盘起始角度,默认 225。圆心 正右手侧为0度，正上方为90度，正左手侧为180度。
+            endAngle: 0,
+            splitNumber: null,
+            type: "gauge",
+            progress: {
+              show: true,
+              width: 18,
             },
             itemStyle: {
-              normal: {
-                areaStyle: { type: "default" },
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "rgba(44, 97, 203, 1)" },
-                  { offset: 0.5, color: "rgba(16, 35, 72, 1)" },
-                  { offset: 1, color: "#000" },
-                ]),
-                borderColor: "#71df6f", //拐点边框颜色
-                borderWidth: 2, //拐点边框大小
+              color: "#d06c1d",
+              shadowColor: "rgba(0,138,255,0.45)",
+              shadowBlur: 10,
+              shadowOffsetX: 2,
+              shadowOffsetY: 2,
+            },
+            axisLine: {
+              lineStyle: {
+                width: 18,
               },
             },
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: "存款",
-            type: "line",
-            stack: "总量",
-            areaStyle: {},
-            itemStyle: {
-              normal: {
-                areaStyle: { type: "default" },
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "#501725" },
-                  { offset: 0.5, color: "#461421" },
-                  { offset: 1, color: "#000" },
-                ]),
-                borderColor: "#71df6f", //拐点边框颜色
-                borderWidth: 2, //拐点边框大小
+            axisTick: {
+              show: false,
+            },
+
+            pointer: {
+              // 仪表盘指针。
+              show: false, // 是否显示指针,默认 true。
+            },
+            detail: {
+              show: true,
+              fontSize: 20,
+              offsetCenter: [0, 0],
+            },
+            data: [
+              {
+                value: 70,
               },
-            },
-            emphasis: {
-              focus: "series",
-            },
-            data: [220, 182, 191, 234, 290, 330, 310],
+            ],
           },
         ],
       },
-      firmOverview: {
-        companyNum: "1500",
-        firmPercentageList: {
-          tooltip: {
-            trigger: "item",
-            confine: true,
-          },
-          grid: {
-            left: "0",
-            right: "0",
-            bottom: "0",
-            top: 0,
-          },
-          series: [
-            {
-              type: "pie",
-              radius: ["40%", "70%"],
-              avoidLabelOverlap: false,
-              label: {
-                show: false,
-                position: "center",
-              },
-              labelLine: {
-                show: false,
-              },
-              data: [
-                { value: 1048 },
-                { value: 735 },
-                { value: 580 },
-                { value: 484 },
-                { value: 300 },
-              ],
+      urbanEchart: {
+        series: [
+          {
+            startAngle: 180, // 仪表盘起始角度,默认 225。圆心 正右手侧为0度，正上方为90度，正左手侧为180度。
+            endAngle: 0,
+            splitNumber: null,
+            type: "gauge",
+            progress: {
+              show: true,
+              width: 18,
             },
-          ],
-        },
+            itemStyle: {
+              color: "#c04bd0",
+              shadowColor: "rgba(0,138,255,0.45)",
+              shadowBlur: 10,
+              shadowOffsetX: 2,
+              shadowOffsetY: 2,
+            },
+            axisLine: {
+              lineStyle: {
+                width: 18,
+              },
+            },
+            axisTick: {
+              show: false,
+            },
+
+            pointer: {
+              // 仪表盘指针。
+              show: false, // 是否显示指针,默认 true。
+              length: "70%", // 指针长度，可以是绝对数值，也可以是相对于半径的百分比,默认 80%。
+              width: 5, // 指针宽度,默认 8。
+            },
+
+            detail: {
+              show: true,
+              fontSize: 20,
+              offsetCenter: [0, 0],
+            },
+            data: [
+              {
+                value: 60,
+              },
+            ],
+          },
+        ],
       },
-      frimData: [
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-      ],
-      frimSurrounding: [
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-      ],
     };
   },
   mounted() {},
   methods: {},
-  beforeDestroy() {
-    this.bus.$off(["isLeft"]);
-  },
+  beforeDestroy() {},
 };
 </script>
 

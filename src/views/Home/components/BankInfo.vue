@@ -86,7 +86,7 @@
               <div slot="sideBorderData" class="firmOverview">
                 <div class="firmOverview-left">
                   <div class="firmOverview-num-wrap">
-                    <p class="firmOverview-num-title">企业总数（杭州市）</p>
+                    <p class="line-title">企业总数（杭州市）</p>
                     <p class="firmOverview-num">
                       {{ firmOverview.companyNum }}
                       <span>所</span>
@@ -94,7 +94,7 @@
                   </div>
                   <div class="firmOverview-echart-wrap">
                     <div class="firmOverview-num-wrap">
-                      <p class="firmOverview-num-title">注册资本占比</p>
+                      <p class="line-title">注册资本占比</p>
                     </div>
                     <div class="firmOverview-echart">
                       <chart-block

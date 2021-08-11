@@ -50,7 +50,7 @@ export default {
       }
     },
     handleClick(e) {
-      this.$emit("loading", true);
+      // this.$emit("loading", true);
       this.showSpan = true;
       this.ifBankTitle(e);
       this.bus.$emit("bankType", e);

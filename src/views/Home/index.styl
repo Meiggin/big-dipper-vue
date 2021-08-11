@@ -1,9 +1,25 @@
+
+.fade-enter-active, .fade-leave-active {
+	transition: opacity 0.5s;
+}
+
+.fade-enter, .fade-leave-to { /* .fade-leave-active below version 2.1.8 */
+	opacity: 0;
+}
+
 .home-container {
 	height: 100%;
 	width: 100%;
 	background: #1A1C21;
 	min-width: 1440px;
 	overflow: hidden;
+
+	.line-title {
+		padding-left: 15px;
+		border-left: 6px solid #3779fd;
+		line-height: 27px;
+		margin-top: 35px;
+	}
 
 	.loading {
 		position: fixed;
@@ -166,7 +182,7 @@
 			.live-status {
 				overflow: hidden;
 				height: 100%;
-				background: rgba(0, 0, 0, 0.7);
+				background: rgba(0, 0, 0, 0.92);
 			}
 
 			.status-details {
@@ -217,16 +233,10 @@
 						font-size: 27px;
 						display: flex;
 						padding-bottom: 45px;
+						height: 550px;
 
 						.firmOverview-left {
 							.firmOverview-num-wrap {
-								.firmOverview-num-title {
-									padding-left: 15px;
-									border-left: 6px solid #3779fd;
-									line-height: 27px;
-									margin-top: 35px;
-								}
-
 								.firmOverview-num {
 									font-size: 44px;
 									color: #2c61ca;
@@ -254,6 +264,7 @@
 
 						.firmOverview-right {
 							margin-left: 83px;
+							height: 100%;
 
 							p {
 								padding-left: 15px;
@@ -265,6 +276,7 @@
 
 							.firmOverview-right-table {
 								margin-top: 27px;
+								height: 100%;
 
 								table {
 									border-collapse: collapse;
@@ -286,6 +298,10 @@
 									}
 
 									tbody {
+										tr {
+											height: 40px;
+										}
+
 										tr:nth-child(odd) {
 											background: #10152c;
 										}
@@ -316,6 +332,7 @@
 						margin-left: 50px;
 						padding-bottom: 70px;
 						margin-top: 30px;
+						overflow: hidden;
 
 						p {
 							margin-top: 17px;
@@ -474,7 +491,7 @@
 
 					.depositTrend-charts {
 						width: 800px;
-						height: 410px;
+						height: 380px;
 						padding-bottom: 50px;
 					}
 
@@ -516,6 +533,143 @@
 									}
 								}
 							}
+						}
+					}
+
+					// 企业信息页面
+					.enterprise-potential-analysis {
+						width: 800px;
+						height: 952px;
+						padding-left: 50px;
+
+						.firmPotential-top {
+							display: flex;
+							margin-top: 35px;
+
+							.relation-echarts {
+								width: 575px;
+								height: 309px;
+								background: #100c2a;
+								border-radius: 5px;
+							}
+
+							.relation-gauge {
+								margin-left: 40px;
+								color: #dedee0;
+								font-size: 14px;
+
+								p {
+									margin: 0;
+								}
+
+								.relation-gauge-top {
+									width: 190px;
+									height: 133px;
+									background: #100c2a;
+									border-radius: 5px;
+									padding-top: 10px;
+									padding-left: 10px;
+								}
+
+								.relation-gauge-bottom {
+									width: 190px;
+									height: 133px;
+									background: #100c2a;
+									border-radius: 5px;
+									margin-top: 25px;
+									padding-top: 10px;
+									padding-left: 10px;
+								}
+							}
+						}
+
+						.firmPotential-center {
+							display: flex;
+							margin-top: 16px;
+
+							p {
+								margin: 0;
+							}
+
+							.firmPotential-center-top {
+								width: 421px;
+								height: 224px;
+								background: #100c2a;
+								border-radius: 5px;
+							}
+
+							.firmPotential-center-bottom {
+								width: 360px;
+								height: 224px;
+								background: #100c2a;
+								margin-left: 40px;
+								border-radius: 5px;
+							}
+						}
+
+						.firmPotential-bottom {
+							height: 334px;
+							width: 100%;
+							background: #020a29;
+							margin-top: 24px;
+							border-radius: 5px;
+
+							p {
+								margin: 0;
+							}
+						}
+					}
+
+					.firmScore {
+						display: flex;
+						padding-bottom: 30px;
+
+						.firmScore-left-wrap {
+							margin-top: 35px;
+							margin-left: 50px;
+
+							.firmScore-left {
+								width: 490px;
+								height: 350px;
+								background: #100c2a;
+							}
+
+							p {
+								text-align: center;
+								line-height: 70px;
+							}
+						}
+					}
+
+					.firmProduct {
+						padding-bottom: 50px;
+
+						.firmProduct-table {
+							width: 832px;
+							margin: 0 auto;
+
+							table {
+								border-collapse: collapse;
+								width: 832px;
+								text-align: center;
+
+								tr {
+									height: 60px;
+								}
+							}
+						}
+					}
+
+					.business-scope {
+						padding-bottom: 60px;
+
+						.business-block {
+							background: #222222;
+							width: 830px;
+							height: 240px;
+							margin: 0 auto;
+							font-size: 18px;
+							color: #dfdfdf;
 						}
 					}
 				}

@@ -8,19 +8,22 @@
       <!-- 地图 -->
       <div id="userMap" class="markerClass" style="height: 100%"></div>
       <!-- 边 -->
-      <transition
-        enter-active-class="animated fadeOut"
-        leave-active-class="animated fadeOut"
-      >
+      <transition name="fade">
         <BankDataPreview v-if="action == 0"></BankDataPreview>
+      </transition>
+      <transition name="fade">
         <BankInfo v-if="action == 1"></BankInfo>
+      </transition>
+      <transition name="fade">
         <FirmInfo v-if="action == 2"></FirmInfo>
       </transition>
       <!-- 地图标题 -->
-      <BankBakingPreview
-        :isLoading="isLoading"
-        @loading="titleLoading"
-      ></BankBakingPreview>
+      <transition name="fade">
+        <BankBakingPreview
+          :isLoading="isLoading"
+          @loading="titleLoading"
+        ></BankBakingPreview>
+      </transition>
     </section>
   </div>
 </template>
@@ -75,6 +78,7 @@ export default {
       overlaysList: [],
       district: null,
       AMap: null,
+      circle: null,
       ADlist: [
         { str: "上城区" },
         { str: "拱墅区" },
@@ -159,21 +163,59 @@ export default {
           this.loca = new Loca.Container({
             map: this.mapValue,
           });
-          this.mapValue.on("zoomend", (e) => {
-            let currentZoom = this.mapValue.getZoom();
-            if (currentZoom <= 10) {
-              this.mapValue.clearMap();
-              this.districtPolygon(this.ADlist);
-              this.loca.remove(this.bankBranch);
-              this.action = 0;
-              this.showLoading();
-            }
-          });
+          this.mapZoomend();
         })
         .catch((e) => {
           console.log(e);
         });
     },
+    //地图缩放事件
+    mapZoomend() {
+      this.mapValue.on("zoomend", (e) => {
+        let currentZoom = this.mapValue.getZoom();
+        if (currentZoom <= 10) {
+          this.mapValue.clearMap();
+          this.districtPolygon(this.ADlist);
+          this.loca.remove(this.bankBranch);
+          this.action = 0;
+        }
+      });
+    },
+    //画线
+    mapPolyline(bounds, x, polygons) {
+      let polyline = new this.AMap.Polyline({
+        map: this.mapValue,
+        strokeWeight: 5,
+        strokeOpacity: 1,
+        strokeColor: "#fff",
+        cursor: "pointer",
+        path: bounds[x],
+        fillOpacity: 0,
+        fillColor: "#000",
+        strokeStyle: "",
+      });
+      polygons.push(polyline);
+    },
+    //多个行政区
+    mapPolygon(bounds, x, polygons) {
+      let polygon = new this.AMap.Polygon({
+        map: this.mapValue,
+        strokeWeight: 4,
+        strokeOpacity: 1,
+        strokeColor: "#4d4d4d",
+        cursor: "pointer",
+        path: bounds[x],
+        fillOpacity: 0.6,
+        fillColor: "#38448e",
+        id: x,
+        strokeStyle: "",
+        zIndex: 9,
+      });
+      polygons.push(polygon);
+      this.polygonMouse(polygon);
+      this.polygonClick(polygon);
+    },
+    //搜索行政区生成行政区划polygon
     districtPolygon(item) {
       if (item.length == 1) {
         this.district.search(item[0].str, (status, result) => {
@@ -181,22 +223,8 @@ export default {
           let polygons = [];
           if (bounds) {
             for (let x = 0, l = bounds.length; x < l; x++) {
-              //生成行政区划polygon
-              let polygon = new this.AMap.Polygon({
-                map: this.mapValue,
-                strokeWeight: 5,
-                strokeOpacity: 1,
-                strokeColor: "#fff",
-                cursor: "pointer",
-                path: bounds[x],
-                fillOpacity: 0,
-                fillColor: "#000",
-                id: x,
-                strokeStyle: "",
-              });
-              polygons.push(polygon);
+              this.mapPolyline(bounds, x, polygons);
             }
-            this.mapValue.add(polygons);
           }
         });
       } else {
@@ -206,24 +234,8 @@ export default {
             let polygons = [];
             if (bounds) {
               for (let x = 0, l = bounds.length; x < l; x++) {
-                //生成行政区划polygon
-                let polygon = new this.AMap.Polygon({
-                  map: this.mapValue,
-                  strokeWeight: 4,
-                  strokeOpacity: 1,
-                  strokeColor: "#4d4d4d",
-                  cursor: "pointer",
-                  path: bounds[x],
-                  fillOpacity: 0.6,
-                  fillColor: "#38448e",
-                  id: i,
-                  strokeStyle: "",
-                });
-                polygons.push(polygon);
-                this.polygonMouse(polygon);
-                this.polygonClick(polygon);
+                this.mapPolygon(bounds, x, polygons);
               }
-              this.mapValue.add(polygons);
             }
           });
         }
@@ -231,7 +243,55 @@ export default {
 
       this.mapValue.setFitView();
     },
+    //生成银行网点5公里范围地图
+    fiveCircle(e) {
+      const feat = this.bankBranch.queryFeature(e.pixel.toArray());
+      console.log(feat);
+      if (feat != undefined) {
+        this.loca.remove(this.bankBranch);
+        this.circle = new AMap.Circle({
+          center: e.lnglat, // 圆心位置
+          radius: 5000, // 圆半径
+          fillColor: "red", // 圆形填充颜色
+          strokeColor: "#fff", // 描边颜色
+          strokeWeight: 4, // 描边宽度
+          zIndex: 15,
+        });
+        this.mapValue.add(this.circle);
+        this.mapValue.setZoomAndCenter(13, e.lnglat);
+        this.action = 1;
+      }
+    },
+    //生成银行网点Loca
+    bankBranchLoca(e) {
+      const geo = new Loca.GeoJSONSource({
+        data: cityJson,
+      });
+      this.bankBranch = new Loca.PointLayer({
+        zIndex: 10,
+        opacity: 1,
+        blend: "normal",
+      });
+      this.bankBranch.setSource(geo);
+      const colors = ["#fff"];
+      this.bankBranch.setStyle({
+        unit: "meter",
+        radius: (index, f) => {
+          var n = f.properties["人口"];
+          return n * 100;
+        },
+        color: colors,
 
+        borderWidth: 0,
+        blurRadius: -1,
+      });
+      this.loca.add(this.bankBranch);
+      this.mapValue.setFitView([e.target]);
+      this.mapValue.on("click", (value) => {
+        this.fiveCircle(value);
+      });
+    },
+    //polygon点击生成loca
     polygonClick(polygon) {
       polygon.on("click", (e) => {
         let overlaysList = this.mapValue.getAllOverlays("polygon");
@@ -248,55 +308,16 @@ export default {
               area: result.regeocode.addressComponent.district,
               bankName: "",
             };
-            getBankNetwork(data).then((res) => {
-              const geo = new Loca.GeoJSONSource({
-                data: res.data,
-              });
-              this.bankBranch = new Loca.PointLayer({
-                zIndex: 10,
-                opacity: 1,
-                blend: "normal",
-              });
-              this.bankBranch.setSource(geo);
-              const colors = [
-                "rgba(254,255,198,0.95)",
-                "rgba(255,238,149,0.95)",
-                "rgba(255,217,99,0.95)",
-                "rgba(255,175,43,0.95)",
-                "rgba(255,135,24,0.95)",
-                "rgba(234,10,0,0.95)",
-                "rgba(195,0,0,0.95)",
-                "rgba(139,0,0,0.95)",
-              ];
-              this.bankBranch.setStyle({
-                unit: "meter",
-                radius: (index, f) => {
-                  var n = f.properties["人口"];
-                  return n * 100;
-                },
-                color: (index, f) => {
-                  var n = Math.min(7, ~~(f.properties["人均GDP"] / 10000));
-                  return colors[n];
-                },
-                borderWidth: 0,
-                blurRadius: -1,
-              });
-              this.loca.add(this.bankBranch);
-            });
+
+            // getBankNetwork(data).then((res) => {});
           }
         });
-        this.mapValue.setFitView([e.target]);
-        this.mapValue.on("click", (e) => {
-          const feat = this.bankBranch.queryFeature(e.pixel.toArray());
-          // geocoder.getAddress(feat.coordinates, (status, result) => {
-          //   if (status === "complete" && result.regeocode) {
-          //     console.log(result);
-          //   }
-          // });
-          console.log(e);
-          this.action = 1;
-          this.showLoading();
-        });
+        this.bankBranchLoca(e);
+        // geocoder.getAddress(feat.coordinates, (status, result) => {
+        //   if (status === "complete" && result.regeocode) {
+        //     console.log(result);
+        //   }
+        // });
       });
     },
     polygonMouse(polygon) {
