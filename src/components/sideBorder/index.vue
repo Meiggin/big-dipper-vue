@@ -34,7 +34,6 @@ export default {
     // width: -webkit-fit-content;
     display: inline-block;
     height: 95px;
-    min-width: 300px;
     position: relative;
     background-image: url('../../assets/titleBorder.png');
     background-size: contain;
@@ -58,7 +57,7 @@ export default {
   }
 
   .sideBorderTitle1 {
-    position: absolute;
+    position: relative;
     top: 36px;
     color: #fff;
     z-index: 2;

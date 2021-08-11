@@ -5,14 +5,14 @@
       <div class="live-status">
         <div class="status-details">
           <div class="dataSiderList">
-            <sideBorder sideTitle="银行基本信息">
+            <sideBorder sideTitle="企业基本信息">
               <div slot="sideBorderData" class="bank-info">
                 <div>
-                  <p>银行名称:</p>
+                  <p>企业名称:</p>
                   <p>地址:</p>
-                  <p>营业时间:</p>
+                  <p>统一社会信用代码:</p>
                   <p>联系电话:</p>
-                  <p>成立时间:</p>
+                  <p>所属行业:</p>
                 </div>
                 <div class="info">
                   <p>中国工商银行</p>
@@ -23,7 +23,7 @@
                 </div>
               </div>
             </sideBorder>
-            <sideBorder sideTitle="银行金融数据">
+            <sideBorder sideTitle="企业潜力分析">
               <div slot="sideBorderData" class="bank-finance-info">
                 <div class="bank-deposit">
                   <p class="bank-deposit-title">本月存款额</p>
@@ -65,14 +65,6 @@
                 </div>
               </div>
             </sideBorder>
-            <sideBorder sideTitle="近半年存款贷款趋势图">
-              <div
-                slot="sideBorderData"
-                class="depositTrend-charts chartsBlock"
-              >
-                <chart-block :option="depositTrendEchart"></chart-block>
-              </div>
-            </sideBorder>
           </div>
         </div>
       </div>
@@ -82,7 +74,7 @@
       <div class="live-status">
         <div class="status-details">
           <div class="dataSiderList">
-            <sideBorder sideTitle="周边企业总览">
+            <sideBorder sideTitle="企业评分">
               <div slot="sideBorderData" class="firmOverview">
                 <div class="firmOverview-left">
                   <div class="firmOverview-num-wrap">
@@ -126,7 +118,51 @@
                 </div>
               </div>
             </sideBorder>
-            <sideBorder sideTitle="周边企业信息">
+            <sideBorder sideTitle="企业产品信息">
+              <div slot="sideBorderData" class="firmOverview">
+                <div class="firmOverview-left">
+                  <div class="firmOverview-num-wrap">
+                    <p class="firmOverview-num-title">企业总数（杭州市）</p>
+                    <p class="firmOverview-num">
+                      {{ firmOverview.companyNum }}
+                      <span>所</span>
+                    </p>
+                  </div>
+                  <div class="firmOverview-echart-wrap">
+                    <div class="firmOverview-num-wrap">
+                      <p class="firmOverview-num-title">注册资本占比</p>
+                    </div>
+                    <div class="firmOverview-echart">
+                      <chart-block
+                        :option="firmOverview.firmPercentageList"
+                      ></chart-block>
+                    </div>
+                  </div>
+                </div>
+                <div class="firmOverview-right">
+                  <p>TOP10企业</p>
+                  <div class="firmOverview-right-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th class="rank">排名</th>
+                          <th>名称</th>
+                          <th class="score">评分</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(item, index) in frimData" :key="index">
+                          <td>{{ index + 1 }}</td>
+                          <td>{{ item.name }}</td>
+                          <td>{{ item.value }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </sideBorder>
+            <sideBorder sideTitle="企业经营范围信息">
               <div slot="sideBorderData" class="surrounding-charts chartsBlock">
                 <p>TOP10企业</p>
                 <div class="surrounding-right-table">
@@ -160,7 +196,7 @@
 import sideBorder from "@/components/sideBorder/index";
 const echarts = require("echarts");
 export default {
-  name: "BankInfo",
+  name: "FirmInfo",
   components: { sideBorder },
   data() {
     return {

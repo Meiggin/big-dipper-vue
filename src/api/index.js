@@ -37,10 +37,21 @@ export function getCompanyAccountRate(query) {
         params: query
     })
 }
-export function updateArticle(data) {
+// export function updateArticle(data) {
+//     return request({
+//         url: '/vue-element-admin/article/update',
+//         method: 'post',
+//         data
+//     })
+// }
+
+
+//获取银行网点坐标
+
+export function getBankNetwork(query) {
     return request({
-        url: '/vue-element-admin/article/update',
-        method: 'post',
-        data
+        url: '/getBankNetwork',
+        method: 'get',
+        params: query
     })
 }

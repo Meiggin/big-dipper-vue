@@ -199,20 +199,20 @@ export default {
           },
         },
         legend: {
-          // data: ["国有银行", "村镇银行", "股份银行", "城市银行"],
-          // orient: "horizontal",
-          // right: 0,
-          // width: 209,
-          // itemWidth: 33,
-          // itemHeight: 16,
-          // itemStyle: {
-          //   width: "50px",
-          //   opacity: "0.6",
-          // },
-          // textStyle: {
-          //   color: "#b3b3b3",
-          //   fontSize: "13px",
-          // },
+          data: ["国有银行", "村镇银行", "股份银行", "城市银行"],
+          orient: "horizontal",
+          right: 0,
+          width: 209,
+          itemWidth: 33,
+          itemHeight: 16,
+          itemStyle: {
+            width: "50px",
+            opacity: "0.6",
+          },
+          textStyle: {
+            color: "#b3b3b3",
+            fontSize: "13px",
+          },
         },
         grid: {
           left: "0",
