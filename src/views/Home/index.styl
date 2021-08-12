@@ -277,6 +277,7 @@
 							.firmOverview-right-table {
 								margin-top: 27px;
 								height: 100%;
+								width: 100%;
 
 								table {
 									border-collapse: collapse;
@@ -561,7 +562,7 @@
 							}
 
 							.relation-gauge {
-								margin-left: 40px;
+								margin-left: 20px;
 								color: #dedee0;
 								font-size: 14px;
 
@@ -570,16 +571,21 @@
 								}
 
 								.relation-gauge-top {
-									width: 190px;
+									width: 210px;
 									height: 133px;
 									background: #100c2a;
 									border-radius: 5px;
 									padding-top: 10px;
 									padding-left: 10px;
+
+									p {
+										font-size: 12px;
+										margin-top: 4px;
+									}
 								}
 
 								.relation-gauge-bottom {
-									width: 190px;
+									width: 210px;
 									height: 133px;
 									background: #100c2a;
 									border-radius: 5px;
@@ -603,6 +609,23 @@
 								height: 224px;
 								background: #100c2a;
 								border-radius: 5px;
+
+								p {
+									margin: 25px 0 10px 25px;
+								}
+
+								table {
+									margin: 0 auto;
+									width: 90%;
+
+									thead {
+										tr {
+											th {
+												font-weight: 400;
+											}
+										}
+									}
+								}
 							}
 
 							.firmPotential-center-bottom {
@@ -611,15 +634,33 @@
 								background: #100c2a;
 								margin-left: 40px;
 								border-radius: 5px;
+
+								.firmPotential-center-bottom-echart {
+									width: 320px;
+									height: 200px;
+								}
+
+								p {
+									margin: 25px 0 10px 25px;
+								}
 							}
 						}
 
 						.firmPotential-bottom {
-							height: 334px;
-							width: 100%;
+							height: 304px;
+							width: 100% -20px;
 							background: #020a29;
 							margin-top: 24px;
 							border-radius: 5px;
+							padding-top: 20px;
+							padding-left: 20px;
+
+							.firmPotential-bottom-echarts {
+								width: 600px;
+								height: 200px;
+								margin: 0 auto;
+								padding-top: 40px;
+							}
 
 							p {
 								margin: 0;
@@ -634,16 +675,41 @@
 						.firmScore-left-wrap {
 							margin-top: 35px;
 							margin-left: 50px;
+							border-radius: 5px;
 
 							.firmScore-left {
-								width: 490px;
+								width: 470px;
 								height: 350px;
 								background: #100c2a;
+								padding-top: 20px;
 							}
 
 							p {
 								text-align: center;
 								line-height: 70px;
+							}
+						}
+
+						.firmScore-right {
+							width: 341px;
+							margin-top: 30px;
+							margin-left: 30px;
+							text-align: center;
+
+							.rank {
+								width: 100px;
+							}
+
+							.score {
+								width: 130px;
+							}
+
+							thead {
+								tr {
+									th {
+										color: #2c61ca;
+									}
+								}
 							}
 						}
 					}
@@ -672,11 +738,15 @@
 
 						.business-block {
 							background: #222222;
-							width: 830px;
+							width: 790px;
 							height: 240px;
 							margin: 0 auto;
 							font-size: 18px;
-							color: #dfdfdf;
+							color: #8f8f8f;
+							padding: 20px;
+							p {
+								text-indent:40px;
+							}
 						}
 					}
 				}

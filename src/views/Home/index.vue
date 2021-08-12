@@ -34,7 +34,7 @@ import BankDataPreview from "./components/BankDataPreview";
 import BankBakingPreview from "./components/BankBakingPreview";
 import BankInfo from "./components/BankInfo";
 import FirmInfo from "./components/FirmInfo";
-
+import cityJson from "@/utils/jsonData.json";
 import { getBankNetwork, getCompanyByRange } from "@/api/index";
 export default {
   name: "DataPreview",
@@ -47,7 +47,7 @@ export default {
       },
       texts: [],
       apiData: {},
-      action: 0,
+      action: 2,
       isLoading: false,
       height: "",
       colors: {},
@@ -272,7 +272,24 @@ export default {
         this.mapValue.setZoomAndCenter(13, e.lnglat);
         this.action = 1;
         let data = {};
-        getCompanyByRange(e.lnglat).then((res) => {});
+        getCompanyByRange(e.lnglat).then((res) => {
+          const geo = new Loca.GeoJSONSource({
+            data: this.bankOutlets,
+          });
+          this.bankBranch = new Loca.PointLayer({
+            zIndex: 10,
+            opacity: 0.7,
+            blend: "normal",
+          });
+          this.bankBranch.setSource(geo);
+          this.bankBranch.setStyle({
+            radius: 5,
+            color: "#e407b3",
+            borderWidth: 10,
+            borderColor: "#890481",
+          });
+          this.loca.add(this.bankBranch);
+        });
       }
     },
     ifBankTitle(value) {

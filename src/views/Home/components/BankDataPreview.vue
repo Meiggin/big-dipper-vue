@@ -336,12 +336,6 @@ export default {
             showBackground: true,
             barWidth: 10,
             itemStyle: {
-              emphasis: {
-                barBorderRadius: 7,
-              },
-              normal: {
-                barBorderRadius: 7,
-              },
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: "#83bff6" },
                 { offset: 0.5, color: "#188df0" },
@@ -727,7 +721,7 @@ export default {
         type: "scatter",
         data: [],
         symbolSize: (dataItem) => {
-          return dataItem[1] * 2;
+          return dataItem[1] ;
         },
       });
     });
