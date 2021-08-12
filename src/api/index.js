@@ -14,6 +14,42 @@ export function getAreaBankNumber(query) {
         params: query
     })
 }
+export function getBankAreaRate(query) {
+    return request({
+        url: '/companyOverview/getBankAreaRate',
+        method: 'get',
+        params: query
+    })
+}
+export function getBankNumByType(query) {
+    return request({
+        url: '/firstPageLeft/getBankNumByType',
+        method: 'get',
+        params: query
+    })
+}
+export function getBankNumByArea(query) {
+    return request({
+        url: '/firstPageLeft/getBankNumByArea',
+        method: 'get',
+        params: query
+    })
+}
+export function getBankNumRateByArea(query) {
+    return request({
+        url: '/firstPageLeft/getBankNumRateByArea',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getBankNumByTypeAndArea(query) {
+    return request({
+        url: '/firstPageLeft/getBankNumByTypeAndArea',
+        method: 'get',
+        params: query
+    })
+}
 export function getBankNumRate(query) {
     return request({
         url: '/firstPageLeft/getBankNumRate',
@@ -51,6 +87,14 @@ export function getCompanyAccountRate(query) {
 export function getBankNetwork(query) {
     return request({
         url: '/getBankNetwork',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getCompanyByRange(query) {
+    return request({
+        url: '/getCompanyByRange',
         method: 'get',
         params: query
     })

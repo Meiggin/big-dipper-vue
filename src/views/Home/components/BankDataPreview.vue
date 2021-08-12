@@ -17,7 +17,7 @@
         </div>
         <div class="status-details">
           <div class="dataSiderList">
-            <sideBorder :sideTitle="`${bankAddList.sideTitle}增长趋势`">
+            <sideBorder :sideTitle="`${bankStr + searchList.area}增长趋势`">
               <div slot="sideBorderData" class="bankAddLine-charts chartsBlock">
                 <chart-block
                   :option="bankAddList"
@@ -93,8 +93,8 @@
                       <tbody>
                         <tr v-for="(item, index) in frimData" :key="index">
                           <td>{{ index + 1 }}</td>
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.value }}</td>
+                          <td class="tableFrimName">{{ item.entname }}</td>
+                          <td>{{ item.avgScore }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -131,6 +131,11 @@ import {
   getBankNumRate,
   getCompanyOverview,
   getCompanyAccountRate,
+  getBankAreaRate,
+  getBankNumByType,
+  getBankNumByTypeAndArea,
+  getBankNumByArea,
+  getBankNumRateByArea,
 } from "@/api/index.js";
 export default {
   name: "BankDataPreview",
@@ -142,10 +147,11 @@ export default {
       //搜索集合
       searchList: {
         bankType: null,
+        backName: null,
+        area: "",
       },
       //银行增长
       bankAddList: {
-        sideTitle: "杭州市银行",
         xAxis: {
           type: "category",
           axisLine: {
@@ -156,16 +162,7 @@ export default {
 
           data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         },
-        itemStyle: {
-          // 阴影的大小
-          shadowBlur: 200,
-          // 阴影水平方向上的偏移
-          shadowOffsetX: 0,
-          // 阴影垂直方向上的偏移
-          shadowOffsetY: 0,
-          // 阴影颜色
-          shadowColor: "rgba(0, 0, 0, 0.5)",
-        },
+
         yAxis: {
           type: "value",
           splitLine: {
@@ -186,6 +183,18 @@ export default {
           {
             data: [150, 230, 224, 218, 135, 147, 260],
             type: "line",
+            itemStyle: {
+              normal: {
+                areaStyle: { type: "default" },
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: "rgba(44, 97, 203, 1)" },
+                  { offset: 0.5, color: "rgba(16, 35, 72, 1)" },
+                  { offset: 1, color: "#000" },
+                ]),
+                borderColor: "#71df6f", //拐点边框颜色
+                borderWidth: 2, //拐点边框大小
+              },
+            },
           },
         ],
       },
@@ -216,7 +225,7 @@ export default {
         },
         grid: {
           left: "0",
-          right: "0",
+          right: "3%",
           top: "4%",
           bottom: "0",
           containLabel: true,
@@ -365,15 +374,6 @@ export default {
         tooltip: {
           trigger: "item",
         },
-
-        visualMap: {
-          show: false,
-          min: 80,
-          max: 2000,
-          inRange: {
-            colorLightness: [0, 1],
-          },
-        },
         series: [
           {
             type: "pie",
@@ -454,8 +454,6 @@ export default {
         legend: {
           left: 0,
           orient: "vertical",
-          itemWidth: 33,
-          itemHeight: 16,
           textStyle: {
             color: "#b3b3b3",
             fontSize: "13px",
@@ -705,6 +703,7 @@ export default {
   mounted() {
     // this.$refs.bankAddLine.setOption(this.option);
     this.getData();
+    this.busMent();
     this.capitalScaleDays.forEach((day, idx) => {
       this.capitalScale.title.push({
         textBaseline: "middle",
@@ -741,6 +740,56 @@ export default {
     });
   },
   methods: {
+    busMent() {
+      this.bus.$on("bankType", (val) => {
+        console.log(1);
+        if (val == null) {
+          this.searchList.bankType = null;
+          this.bankStr = "杭州市银行";
+          this.getBankNumRate();
+        } else {
+          this.searchList.bankType = val;
+          this.ifBankTitle(val);
+          this.getBankNumByStartTime(); //银行增加趋势
+          this.getBankNumByType(); //各银行分布情况
+
+          if (this.searchList.area != "") {
+            this.getBankNumByTypeAndArea(); //类and区银行分布
+          } else {
+            this.getBankNumByArea(); //区各银行分布
+          }
+        }
+        this.getCompanyOverview(); //企业总览
+        this.getCompanyAccountRate(); //企业开户行占比
+      });
+      this.bus.$on("area", (val) => {
+        if (val != "99") {
+          this.searchList.area = val;
+          this.actionFlow = 1;
+          if (this.searchList.bankType !== null) {
+            this.getBankNumByTypeAndArea(); //类and区银行分布
+          } else {
+            this.getBankNumByArea(); //区各银行分布
+            this.getBankNumRateByArea(); //区各银行占比
+          }
+        } else {
+          this.searchList.area = "";
+          this.actionFlow = 0;
+          this.getBankNumRate();
+        }
+        this.getCompanyOverview(); //企业总览
+        this.getCompanyAccountRate(); //企业开户行占比
+      });
+      this.bus.$on("actionFlow", (val) => {
+        this.actionFlow = val;
+        if (val == 0) {
+          this.searchList.area = "";
+          this.searchList.bankType = null;
+          this.searchList.backName = "";
+          this.getBankNumByStartTime(); //类银行分布
+        }
+      });
+    },
     ifBankTitle(value) {
       if (value == 0) {
         this.bankStr = "国有银行";
@@ -753,54 +802,61 @@ export default {
       }
     },
     getData() {
-      this.bus.$on("bankType", (val) => {
-        if (val != null) {
-          if (this.searchList.bankType != val) {
-            this.searchList.bankType = val;
-            this.ifBankTitle(this.searchList.bankType);
-            this.bankAddList.sideTitle = this.bankStr;
-            this.getBankNumByStartTime();
-            this.getAreaBankNumber();
-            this.getBankNumRate();
-            // 右侧
-            this.getCompanyOverview();
-            this.getCompanyAccountRate();
-          } else {
-            this.searchList.bankType = val;
-          }
-        } else {
-          this.bankAddList.sideTitle = "杭州市银行";
-        }
-      });
-      this.bus.$on("actionFlow", (val) => {
-        this.actionFlow = val;
-      });
       // 左侧
       this.getBankNumByStartTime();
       this.getAreaBankNumber();
-      this.getBankNumRate();
+      if (this.searchList.area == "" && this.searchList.bankType == null) {
+        this.getBankNumRate();
+      }
       // 右侧
       this.getCompanyOverview();
       this.getCompanyAccountRate();
     },
+    getBankNumRateByArea() {
+      getBankNumRateByArea(this.searchList).then((res) => {
+        this.bankProportion.series[0].data = res.data.data.sort(function (
+          a,
+          b
+        ) {
+          return a.value - b.value;
+        });
+      });
+    },
+    getBankNumByArea() {
+      getBankNumByArea(this.searchList).then((res) => {
+        this.bankKind.yAxis.data = res.data.xAxis.data;
+        this.bankKind.series = res.data.series;
+      });
+    },
+    getBankNumByTypeAndArea() {
+      getBankNumByTypeAndArea(this.searchList).then((res) => {
+        this.bankKind.yAxis.data = res.data.yAxis.data;
+        this.bankKind.series = res.data.series;
+      });
+    },
+    getBankNumByType() {
+      getBankNumByType(this.searchList).then((res) => {
+        // this.bankKind = res.data;
+        this.bankKind.yAxis.data = res.data.yAxis.data;
+        this.bankKind.series = res.data.series;
+      });
+    },
     getBankNumByStartTime() {
-      let data = this.searchList;
-      getBankNumByStartTime(data).then((res) => {
+      getBankNumByStartTime(this.searchList).then((res) => {
         this.bankAddList.xAxis = res.data.xAxis;
         this.bankAddList.series = res.data.series;
         this.bankAddList.series[0].type = "line";
-        this.bankAddList.sideTitle = this.bankStr + "增长趋势";
+        // this.bankAddList.sideTitle = this.bankStr;
       });
     },
     getAreaBankNumber() {
-      let data = this.searchList;
-      getAreaBankNumber(data).then((res) => {
+      getAreaBankNumber(this.searchList).then((res) => {
         this.bankDistributed.xAxis = res.data.xAxis;
         this.bankDistributed.series = res.data.series;
       });
     },
     getBankNumRate() {
-      getBankNumRate().then((res) => {
+      getBankNumRate(this.searchList).then((res) => {
         // bankProportion;
         this.bankProportion.series[0].data = res.data.data.sort(function (
           a,
@@ -811,18 +867,23 @@ export default {
       });
     },
     getCompanyOverview() {
-      getCompanyOverview().then((res) => {
+      getCompanyOverview(this.searchList).then((res) => {
         // this.firmOverview.companyNum.number = [];
         this.firmOverview.companyNum = res.data.companyNum;
         for (let i in res.data.rate) {
           res.data.rate[i].value = res.data.rate[i].num;
         }
+
         this.firmOverview.firmPercentageList.series[0].data = res.data.rate;
+        if (res.data.top) {
+          this.frimData = res.data.top;
+        } else if (res.data.score) {
+          this.frimData = res.data.score;
+        }
       });
     },
     getCompanyAccountRate() {
-      getCompanyAccountRate().then((res) => {
-        console.log(res);
+      getCompanyAccountRate(this.searchList).then((res) => {
         for (let i in res.data) {
           res.data[i].value = res.data[i].num;
         }

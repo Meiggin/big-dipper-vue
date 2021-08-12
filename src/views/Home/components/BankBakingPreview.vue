@@ -3,7 +3,7 @@
   <div class="bank-baking-preview">
     <h3 ref="bankTitle">
       <div @click="back()" v-if="showSpan"></div>
-      {{ bankNmae + title }}
+      {{ bankName + bankType + area + title }}
     </h3>
 
     <div class="bank-list">
@@ -23,34 +23,53 @@ export default {
   props: ["isLoading"],
   data() {
     return {
-      bankNmae: "杭州银行",
+      bankName: "杭州市银行",
+      bankType: "",
       title: "分布态势",
       showSpan: false,
+      area: "",
     };
   },
 
-  mounted() {},
+  mounted() {
+    this.bus.$on("area", (val) => {
+      console.log(val);
+      if (val != "99") {
+        this.area = val;
+      } else {
+        this.area = "";
+      }
+    });
+    this.bus.$on("showSpan", (val) => {
+      if (val == true) {
+        this.showSpan = true;
+      } else {
+        this.showSpan = false;
+      }
+    });
+  },
   methods: {
     back() {
       this.$emit("loading", true);
       this.showSpan = false;
-      this.bankNmae = "杭州银行";
+      this.bankName = "杭州市银行";
+      this.bankType = "";
+      this.area = "";
       this.bus.$emit("bankType", null);
       this.bus.$emit("actionFlow", 0);
     },
     ifBankTitle(value) {
       if (value == 0) {
-        this.bankNmae = "杭州市国有银行";
+        this.bankName = "杭州市国有银行";
       } else if (value == 1) {
-        this.bankNmae = "杭州市股份银行";
+        this.bankName = "杭州市股份银行";
       } else if (value == 2) {
-        this.bankNmae = "杭州市城市银行";
+        this.bankName = "杭州市城市银行";
       } else if (value == 3) {
-        this.bankNmae = "杭州市村镇银行";
+        this.bankName = "杭州市村镇银行";
       }
     },
     handleClick(e) {
-      // this.$emit("loading", true);
       this.showSpan = true;
       this.ifBankTitle(e);
       this.bus.$emit("bankType", e);

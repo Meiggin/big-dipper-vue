@@ -223,7 +223,7 @@
 					.bankKind-charts {
 						width: 800px;
 						height: 350px;
-						padding-bottom: 40px;
+						padding-bottom: 50px;
 					}
 
 					// 右侧
@@ -283,12 +283,19 @@
 									width: 422px;
 									text-align: center;
 									font-size: 12px;
+									table-layout: fixed;
+
+									td {
+										white-space: nowrap;
+										text-overflow: ellipsis;
+										overflow: hidden;
+									}
 
 									thead {
 										font-size: 17px;
 										color: #3779fd;
 
-										.rank {
+										tr, .rank {
 											width: 94px;
 										}
 

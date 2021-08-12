@@ -35,8 +35,7 @@ import BankBakingPreview from "./components/BankBakingPreview";
 import BankInfo from "./components/BankInfo";
 import FirmInfo from "./components/FirmInfo";
 
-import cityJson from "@/utils/jsonData.json";
-import { getBankNetwork } from "@/api/index";
+import { getBankNetwork, getCompanyByRange } from "@/api/index";
 export default {
   name: "DataPreview",
   components: { BankDataPreview, BankBakingPreview, BankInfo, FirmInfo },
@@ -44,32 +43,9 @@ export default {
     return {
       bankOutlets: {
         type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [106.551556, 29.563009],
-            },
-            properties: {
-              id: 1,
-              名称: "重庆市",
-              地址: "重庆市",
-              adcode_n: -1,
-              adcode_p: -1,
-              adcode_c: -1,
-              adcode_d: -1,
-              point_status: 0,
-              创建时间: "2021-01-27 14:45:12",
-              修改时间: "2021-01-27 14:45:12",
-              人口: 2884.62,
-              GDP: 7894.24,
-              人均GDP: 27367,
-              人均折美元: 4043,
-            },
-          },
-        ],
+        features: [],
       },
+      texts: [],
       apiData: {},
       action: 0,
       isLoading: false,
@@ -91,6 +67,11 @@ export default {
         { str: "富阳区" },
         { str: "临安区" },
       ],
+      searchList: {
+        bankType: null,
+        bankName: null,
+        area: null,
+      },
     };
   },
   mounted() {
@@ -103,8 +84,31 @@ export default {
     this.$once("hook:beforeDestroy", () => {
       window.removeEventListener("resize", this.setElementHeight);
     });
+    this.busMent();
   },
   methods: {
+    busMent() {
+      this.bus.$on("actionFlow", (val) => {
+        if (val == 0) {
+          this.mapValue.setZoom(10);
+        }
+      });
+      this.bus.$on("bankType", (val) => {
+        if (val != null) {
+          if (this.searchList.bankType != val) {
+            this.searchList.bankType = val;
+            this.searchList.bankName = this.ifBankTitle(
+              this.searchList.bankType
+            );
+          } else {
+            this.searchList.bankType = val;
+          }
+        } else {
+          this.searchList.bankType = null;
+          this.searchList.bankName = null;
+        }
+      });
+    },
     // 关闭延时器
     titleLoading() {
       this.showLoading();
@@ -178,6 +182,13 @@ export default {
           this.districtPolygon(this.ADlist);
           this.loca.remove(this.bankBranch);
           this.action = 0;
+          this.bus.$emit("area", 99);
+          if (!this.searchList.bankType) {
+            this.bus.$emit("showSpan", false);
+          }
+        }
+        if (currentZoom >= 14) {
+          this.mapValue.add(this.texts);
         }
       });
     },
@@ -239,6 +250,7 @@ export default {
             }
           });
         }
+        this.bus.$emit("area", 99);
       }
 
       this.mapValue.setFitView();
@@ -246,7 +258,6 @@ export default {
     //生成银行网点5公里范围地图
     fiveCircle(e) {
       const feat = this.bankBranch.queryFeature(e.pixel.toArray());
-      console.log(feat);
       if (feat != undefined) {
         this.loca.remove(this.bankBranch);
         this.circle = new AMap.Circle({
@@ -260,36 +271,20 @@ export default {
         this.mapValue.add(this.circle);
         this.mapValue.setZoomAndCenter(13, e.lnglat);
         this.action = 1;
+        let data = {};
+        getCompanyByRange(e.lnglat).then((res) => {});
       }
     },
-    //生成银行网点Loca
-    bankBranchLoca(e) {
-      const geo = new Loca.GeoJSONSource({
-        data: cityJson,
-      });
-      this.bankBranch = new Loca.PointLayer({
-        zIndex: 10,
-        opacity: 1,
-        blend: "normal",
-      });
-      this.bankBranch.setSource(geo);
-      const colors = ["#fff"];
-      this.bankBranch.setStyle({
-        unit: "meter",
-        radius: (index, f) => {
-          var n = f.properties["人口"];
-          return n * 100;
-        },
-        color: colors,
-
-        borderWidth: 0,
-        blurRadius: -1,
-      });
-      this.loca.add(this.bankBranch);
-      this.mapValue.setFitView([e.target]);
-      this.mapValue.on("click", (value) => {
-        this.fiveCircle(value);
-      });
+    ifBankTitle(value) {
+      if (value == 0) {
+        this.bankStr = "国有银行";
+      } else if (value == 1) {
+        this.bankStr = "股份银行";
+      } else if (value == 2) {
+        this.bankStr = "城市银行";
+      } else if (value == 3) {
+        this.bankStr = "村镇银行";
+      }
     },
     //polygon点击生成loca
     polygonClick(polygon) {
@@ -299,20 +294,79 @@ export default {
           this.mapValue.clearMap();
         }
         let geocoder = new this.AMap.Geocoder();
-
+        this.bus.$emit("showSpan", true);
         geocoder.getAddress(e.lnglat, (status, result) => {
           if (status === "complete" && result.regeocode) {
             let item = [{ str: result.regeocode.addressComponent.district }];
             this.districtPolygon(item);
-            let data = {
-              area: result.regeocode.addressComponent.district,
-              bankName: "",
-            };
 
-            // getBankNetwork(data).then((res) => {});
+            this.searchList.area = result.regeocode.addressComponent.district;
+
+            this.bus.$emit("area", result.regeocode.addressComponent.district);
+            getBankNetwork(this.searchList).then((res) => {
+              if (res.code == 200) {
+                this.bankOutlets.features = [];
+                this.texts = [];
+                for (let i in res.data) {
+                  res.data[i].type = "Feature";
+                  res.data[i].geometry = {
+                    type: "Point",
+                    coordinates: [res.data[i].longitude, res.data[i].latitude],
+                  };
+                  res.data[i].properties = res.data;
+
+                  // let arr = []
+                  this.bankOutlets.features.push(res.data[i]);
+                  const text = new AMap.Text({
+                    position: this.bankOutlets.features[i].geometry.coordinates,
+                    text: this.bankOutlets.features[i].name,
+                    anchor: "top", // 设置文本标记锚点
+                    draggable: false,
+                    cursor: "pointer",
+                    offset: [0, -25],
+                    style: {
+                      padding: "5px 10px",
+                      "margin-bottom": "1rem",
+                      "background-color": "rgba(0,0,0,0.5)",
+                      // 'width': '12rem',
+                      "border-width": 0,
+                      "text-align": "center",
+                      "font-size": "16px",
+                      color: "#fff",
+                    },
+                  });
+                  this.texts.push(text);
+                  // this.bankOutlets.features[i].geometry.coordinates =
+                  //   res.data[i].coordinates;
+                  // this.bankOutlets.features[i].properties = res.data[i];
+                }
+
+                const geo = new Loca.GeoJSONSource({
+                  data: this.bankOutlets,
+                });
+                this.bankBranch = new Loca.PointLayer({
+                  zIndex: 10,
+                  opacity: 0.7,
+                  blend: "normal",
+                });
+                this.bankBranch.setSource(geo);
+                this.bankBranch.setStyle({
+                  radius: 5,
+                  color: "#e407b3",
+                  borderWidth: 10,
+                  borderColor: "#890481",
+                });
+                this.loca.add(this.bankBranch);
+                this.mapValue.setFitView([e.target]);
+
+                this.mapValue.on("click", (value) => {
+                  this.fiveCircle(value);
+                });
+              }
+            });
           }
         });
-        this.bankBranchLoca(e);
+
         // geocoder.getAddress(feat.coordinates, (status, result) => {
         //   if (status === "complete" && result.regeocode) {
         //     console.log(result);
