@@ -22,6 +22,7 @@
         <BankBakingPreview
           :isLoading="isLoading"
           @loading="titleLoading"
+          v-if="action == 0"
         ></BankBakingPreview>
       </transition>
     </section>
@@ -47,7 +48,7 @@ export default {
       },
       texts: [],
       apiData: {},
-      action: 2,
+      action: 0,
       isLoading: false,
       height: "",
       colors: {},
@@ -67,6 +68,8 @@ export default {
         { str: "富阳区" },
         { str: "临安区" },
       ],
+      lnglat: null,
+      companyByRange: null,
       searchList: {
         bankType: null,
         bankName: null,
@@ -187,8 +190,10 @@ export default {
             this.bus.$emit("showSpan", false);
           }
         }
-        if (currentZoom >= 14) {
+        if (currentZoom >= 16) {
           this.mapValue.add(this.texts);
+        } else if (12 < currentZoom < 16) {
+          this.mapValue.remove(this.texts);
         }
       });
     },
@@ -211,7 +216,7 @@ export default {
     mapPolygon(bounds, x, polygons) {
       let polygon = new this.AMap.Polygon({
         map: this.mapValue,
-        strokeWeight: 4,
+        strokeWeight: 2,
         strokeOpacity: 1,
         strokeColor: "#4d4d4d",
         cursor: "pointer",
@@ -271,24 +276,70 @@ export default {
         this.mapValue.add(this.circle);
         this.mapValue.setZoomAndCenter(13, e.lnglat);
         this.action = 1;
-        let data = {};
-        getCompanyByRange(e.lnglat).then((res) => {
-          const geo = new Loca.GeoJSONSource({
-            data: this.bankOutlets,
+        let data = {
+          latitude: e.lnglat.lat,
+          longitude: e.lnglat.lng,
+          name: feat.properties.name,
+        };
+        getCompanyByRange(data).then((res) => {
+          const companyCircleList = [];
+          this.bus.$emit("bankName", feat.properties.name);
+          this.bus.$emit("latLong", e.lnglat);
+          res.data.companys.map((item) => {
+            const companyCircle = new AMap.Circle({
+              center: item.geometry.coordinates, // 圆心位置
+              radius:
+                item.properties.num * 10 > 500
+                  ? "500"
+                  : item.properties.num * 10, // 圆半径
+              fillColor: "#fff", // 圆形填充颜色
+              fillOpacity: 0.3,
+              strokeColor: "#fff", // 描边颜色
+              strokeWeight: 2, // 描边宽度
+            });
+            companyCircleList.push(companyCircle);
+            companyCircle.on("mouseover", () => {
+              companyCircle.setOptions({
+                fillOpacity: 0.6,
+                radius: item.properties.num * 100,
+                fillColor: "#fff",
+              });
+            });
+            companyCircle.on("click", () => {
+              this.action = 2;
+            });
+            companyCircle.on("mouseout", () => {
+              companyCircle.setOptions({
+                radius: item.properties.num * 50,
+                fillOpacity: 0.3,
+                fillColor: "#fff",
+              });
+            });
           });
-          this.bankBranch = new Loca.PointLayer({
-            zIndex: 10,
-            opacity: 0.7,
-            blend: "normal",
-          });
-          this.bankBranch.setSource(geo);
-          this.bankBranch.setStyle({
-            radius: 5,
-            color: "#e407b3",
-            borderWidth: 10,
-            borderColor: "#890481",
-          });
-          this.loca.add(this.bankBranch);
+
+          this.mapValue.add(companyCircleList);
+          // const companyByRange = new Loca.PointLayer({
+          //   zIndex: 16,
+          //   opacity: 0.7,
+          //   blend: "normal",
+          // });
+          // const geo = new Loca.GeoJSONSource({
+          //   data: res.data.companys,
+          // });
+
+          // companyByRange.setSource(geo);
+          // companyByRange.setStyle({
+          //   unit: "meter",
+          //   radius: (index, f) => {
+          //     console.log(f.num);
+          //     var n = f.num;
+          //     return n * 5;
+          //   },
+          //   color: "#fff",
+          //   borderWidth: 10,
+          //   borderColor: "#fff",
+          // });
+          // this.loca.add(companyByRange);
         });
       }
     },
@@ -324,23 +375,20 @@ export default {
               if (res.code == 200) {
                 this.bankOutlets.features = [];
                 this.texts = [];
-                for (let i in res.data) {
-                  res.data[i].type = "Feature";
-                  res.data[i].geometry = {
+                res.data.map((item) => {
+                  item.type = "Feature";
+                  item.geometry = {
                     type: "Point",
-                    coordinates: [res.data[i].longitude, res.data[i].latitude],
+                    coordinates: [item.longitude, item.latitude],
                   };
-                  res.data[i].properties = res.data;
-
-                  // let arr = []
-                  this.bankOutlets.features.push(res.data[i]);
-                  const text = new AMap.Text({
-                    position: this.bankOutlets.features[i].geometry.coordinates,
-                    text: this.bankOutlets.features[i].name,
+                  item.properties = item;
+                  this.text = new AMap.Text({
+                    position: item.geometry.coordinates,
+                    text: item.name,
                     anchor: "top", // 设置文本标记锚点
                     draggable: false,
                     cursor: "pointer",
-                    offset: [0, -25],
+                    offset: [0, 0],
                     style: {
                       padding: "5px 10px",
                       "margin-bottom": "1rem",
@@ -352,12 +400,9 @@ export default {
                       color: "#fff",
                     },
                   });
-                  this.texts.push(text);
-                  // this.bankOutlets.features[i].geometry.coordinates =
-                  //   res.data[i].coordinates;
-                  // this.bankOutlets.features[i].properties = res.data[i];
-                }
-
+                  this.texts.push(this.text);
+                });
+                this.bankOutlets.features = res.data;
                 const geo = new Loca.GeoJSONSource({
                   data: this.bankOutlets,
                 });

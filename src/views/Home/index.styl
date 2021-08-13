@@ -348,6 +348,13 @@
 
 						.info {
 							margin-left: 33px;
+
+							p {
+								overflow: hidden; // 超出的文本隐藏
+								text-overflow: ellipsis; // 溢出用省略号显示
+								white-space: nowrap;
+								width: 600px;
+							}
 						}
 					}
 
@@ -508,39 +515,76 @@
 						height: 750px;
 						padding-bottom: 50px;
 
-						p {
-							padding-left: 15px;
-							border-left: 6px solid #3779fd;
-							line-height: 27px;
-							margin-top: 35px;
-							margin-left: 19px;
-						}
-
 						.surrounding-right-table {
-							margin-top: 50px;
-
+							height: 100%;
 							table {
-								border-collapse: collapse;
-								width: 100%;
-								text-align: center;
-								font-size: 22px;
+									border-collapse: collapse;
+									width: 802px;
+									text-align: center;
+									font-size: 12px;
+									table-layout: fixed;
 
-								thead {
-									font-size: 26px;
-									color: #3779fd;
-									line-height: 100px;
-								}
-
-								tbody {
-									tr {
-										height: 80px;
+									td {
+										white-space: nowrap;
+										text-overflow: ellipsis;
+										overflow: hidden;
 									}
 
-									tr:nth-child(odd) {
-										background: #10152c;
+									thead {
+										font-size: 17px;
+										color: #3779fd;
+
+										tr, .rank {
+											width: 800px;
+										}
+
+										.score {
+											width: 200px;
+										}
+									}
+
+									tbody {
+										tr {
+											height: 40px;
+										}
+
+										tr:nth-child(odd) {
+											background: #10152c;
+										}
 									}
 								}
-							}
+							// table {
+							// 	border-collapse: collapse;
+							// 	text-align: center;
+							// 	font-size: 22px;
+							// 	overflow hidden
+
+							// 	td {
+							// 		white-space: nowrap;
+							// 		text-overflow: ellipsis;
+							// 		overflow: hidden;
+							// 	}
+
+							// 	thead {
+							// 		font-size: 26px;
+							// 		color: #3779fd;
+							// 		line-height: 100px;
+
+							// 		tr {
+							// 			width: 50px;
+							// 		}
+							// 	}
+
+							// 	tbody {
+							// 		tr {
+							// 			height: 80px;
+							// 		}
+
+							// 		tr:nth-child(odd) {
+							// 			background: #10152c;
+							// 		}
+							// 	}
+							// }
 						}
 					}
 
@@ -744,8 +788,9 @@
 							font-size: 18px;
 							color: #8f8f8f;
 							padding: 20px;
+
 							p {
-								text-indent:40px;
+								text-indent: 40px;
 							}
 						}
 					}

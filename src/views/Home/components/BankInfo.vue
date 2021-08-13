@@ -15,11 +15,11 @@
                   <p>成立时间:</p>
                 </div>
                 <div class="info">
-                  <p>中国工商银行</p>
-                  <p>西湖区文二路391号西湖国际科技大厦</p>
+                  <p>{{ BankInfoData.name }}</p>
+                  <p>{{ BankInfoData.address }}</p>
                   <p>周一至周五</p>
-                  <p>13056874512</p>
-                  <p>2008年</p>
+                  <p>{{ BankInfoData.telephone }}</p>
+                  <p>{{ BankInfoData.startdate }}</p>
                 </div>
               </div>
             </sideBorder>
@@ -86,9 +86,9 @@
               <div slot="sideBorderData" class="firmOverview">
                 <div class="firmOverview-left">
                   <div class="firmOverview-num-wrap">
-                    <p class="line-title">企业总数（杭州市）</p>
+                    <p class="line-title">企业总数</p>
                     <p class="firmOverview-num">
-                      {{ firmOverview.companyNum }}
+                      {{ firmDatasum }}
                       <span>所</span>
                     </p>
                   </div>
@@ -116,9 +116,11 @@
                       </thead>
                       <tbody>
                         <tr v-for="(item, index) in frimData" :key="index">
-                          <td>{{ index + 1 }}</td>
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.value }}</td>
+                          <div v-if="index < 9">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ item.entName }}</td>
+                            <td>{{ item.value }}</td>
+                          </div>
                         </tr>
                       </tbody>
                     </table>
@@ -128,7 +130,6 @@
             </sideBorder>
             <sideBorder sideTitle="周边企业信息">
               <div slot="sideBorderData" class="surrounding-charts chartsBlock">
-                <p>TOP10企业</p>
                 <div class="surrounding-right-table">
                   <table>
                     <thead>
@@ -140,9 +141,9 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item, index) in frimSurrounding" :key="index">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.value }}</td>
+                        <td>{{ item.entName }}</td>
+                        <td>{{ item.industry }}</td>
+                        <td>{{ item.regAddr }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -158,12 +159,20 @@
 
 <script>
 import sideBorder from "@/components/sideBorder/index";
+import { getBankInfo, getCompanyInfo } from "@/api/index";
 const echarts = require("echarts");
 export default {
   name: "BankInfo",
   components: { sideBorder },
   data() {
     return {
+      searchData: {
+        name: "",
+        latitude: "",
+        longitude: "",
+      },
+      BankInfoData: {},
+      firmDatasum: "",
       depositTrendEchart: {
         xAxis: {
           type: "category",
@@ -293,10 +302,35 @@ export default {
       ],
     };
   },
-  mounted() {},
-  methods: {},
+  created() {},
+  mounted() {
+    this.bus.$on("bankName", (val) => {
+      this.searchData.name = val;
+      this.getBankInfo();
+    });
+    this.bus.$on("latLong", (val) => {
+      this.searchData.latitude = val.lat;
+      this.searchData.longitude = val.lng;
+      this.getCompanyInfo();
+    });
+  },
+  methods: {
+    getBankInfo() {
+      getBankInfo(this.searchData).then((res) => {
+        this.BankInfoData = res.data;
+      });
+    },
+    getCompanyInfo() {
+      getCompanyInfo(this.searchData).then((res) => {
+        console.log(res);
+        this.firmDatasum = res.data.length;
+        this.frimSurrounding = res.data;
+        this.frimSurrounding.length = 9;
+      });
+    },
+  },
   beforeDestroy() {
-    this.bus.$off(["isLeft"]);
+    // this.bus.$off(["bankName", "latLong"]);
   },
 };
 </script>

@@ -721,7 +721,7 @@ export default {
         type: "scatter",
         data: [],
         symbolSize: (dataItem) => {
-          return dataItem[1] ;
+          return dataItem[1];
         },
       });
     });

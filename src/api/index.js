@@ -99,3 +99,19 @@ export function getCompanyByRange(query) {
         params: query
     })
 }
+export function getBankInfo(query) {
+    return request({
+        url: '/getBankInfo',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getCompanyInfo(query) {
+    return request({
+        url: '/getCompanyInfo',
+        method: 'get',
+        params: query
+    })
+}
+
