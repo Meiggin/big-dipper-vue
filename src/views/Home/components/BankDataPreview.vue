@@ -154,22 +154,40 @@ export default {
       bankAddList: {
         xAxis: {
           type: "category",
+          axisTick: {
+            show: false, //是否显示刻度
+          },
           axisLine: {
+            show: true,
             lineStyle: {
-              color: "#343434",
+              color: "#fff",
+              opacity: "0.5",
             },
           },
-
+          splitLine: {
+            show: false,
+          },
           data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
         },
 
         yAxis: {
           type: "value",
-          splitLine: {
+          axisTick: {
+            show: false, //是否显示刻度
+          },
+          axisLine: {
             show: true,
             lineStyle: {
-              color: "#343434",
+              color: "#fff", // y坐标轴的轴线颜色
+              width: 1, //这里是坐标轴的宽度,可以去掉
+            },
+          },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              color: "#fff",
               type: "solid",
+              opacity: "0.5",
             },
           },
         },
@@ -183,16 +201,26 @@ export default {
           {
             data: [150, 230, 224, 218, 135, 147, 260],
             type: "line",
+            symbol: "circle", //拐点样式
+            symbolColor: "#1bb9b3",
+            symbolSize: 4,
             itemStyle: {
+              normal: {
+                color: "#0da8a3",
+                borderColor: "#0da8a3",
+                lineStyle: {
+                  color: "#1bb9b3",
+                },
+              },
+            },
+            areaStyle: {
               normal: {
                 areaStyle: { type: "default" },
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  { offset: 0, color: "rgba(44, 97, 203, 1)" },
-                  { offset: 0.5, color: "rgba(16, 35, 72, 1)" },
+                  { offset: 0, color: "#1bb9b3" },
+
                   { offset: 1, color: "#000" },
                 ]),
-                borderColor: "#71df6f", //拐点边框颜色
-                borderWidth: 2, //拐点边框大小
               },
             },
           },
@@ -234,17 +262,36 @@ export default {
           {
             type: "category",
             data: [],
+            axisTick: {
+              show: false, //是否显示刻度
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: "#fff",
+                opacity: "0.5",
+              },
+            },
+            splitLine: {
+              show: false,
+            },
           },
         ],
         yAxis: [
           {
             type: "value",
-            splitLine: {
+            axisTick: {
+              show: false, //是否显示刻度
+            },
+            axisLine: {
               show: true,
               lineStyle: {
-                color: "#343434",
-                type: "solid",
+                color: "#fff",
+                opacity: "0.5",
               },
+            },
+            splitLine: {
+              show: false,
             },
           },
         ],
@@ -364,44 +411,52 @@ export default {
           bottom: "0",
           containLabel: true,
         },
-
-        tooltip: {
-          trigger: "item",
+        color: [
+          "rgba(248,194,254,0.5)",//紫
+          "#fff",
+          "#fac858",
+          "#ee6666",
+          "#73c0de",
+          "#3ba272",
+          "#fc8452",
+          "#9a60b4",
+          "#d7a0f9",//chen
+        ],
+        legend: {
+          orient: "vertical",
+          left: "left",
         },
         series: [
           {
+            name: "访问来源",
             type: "pie",
-            radius: "80%",
-            data: [
-              { value: 335, name: "国有银行" },
-              { value: 310, name: "股份银行" },
-              { value: 274, name: "城市银行" },
-              { value: 235, name: "村镇银行" },
-            ].sort(function (a, b) {
-              return a.value - b.value;
-            }),
-            roseType: "angle",
-            label: {
-              color: "rgba(255, 255, 255, 0.3)",
-            },
-            labelLine: {
-              lineStyle: {
-                color: "rgba(255, 255, 255, 0.3)",
+            radius: "100%",
+            center:['70%','50%'],
+             label: {
+                show: false,
+                position: "center",
               },
-              smooth: 0.2,
-              length: 10,
-              length2: 20,
+              labelLine: {
+                show: false,
+              },
+            data: [
+              { value: 1048, name: "搜索引擎" },
+              { value: 735, name: "直接访问" },
+              { value: 580, name: "邮件营销" },
+              { value: 484, name: "联盟广告" },
+              { value: 300, name: "视频广告" },
+            ],
+            itemStyle:{
+              normal:{
+                opacity:1
+              }
             },
-            itemStyle: {
-              color: "#c23531",
-              shadowBlur: 200,
-              shadowColor: "rgba(0, 0, 0, 0.5)",
-            },
-
-            animationType: "scale",
-            animationEasing: "elasticOut",
-            animationDelay: function (idx) {
-              return Math.random() * 200;
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
             },
           },
         ],
@@ -409,11 +464,8 @@ export default {
       //企业总览注册资本占比
       firmOverview: {
         companyNum: "1500",
+        color: [],
         firmPercentageList: {
-          tooltip: {
-            trigger: "item",
-            confine: true,
-          },
           grid: {
             left: "0",
             right: "0",

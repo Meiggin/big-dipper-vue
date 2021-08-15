@@ -6,7 +6,6 @@
     <img class="statusImg4" src="../../assets/border4.png" alt="" />
     <div class="sideBorderTitle-warp">
       <p class="sideBorderTitle1 clear">{{ sideTitle }}</p>
-      <p class="sideBorderTitle2 clear">{{ sideTitle }}</p>
       <img class="sideBorderImg" src="../../assets/titleShadow.png" alt="" />
     </div>
     <slot name="sideBorderData"></slot>

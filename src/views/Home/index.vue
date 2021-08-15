@@ -151,7 +151,7 @@ export default {
           this.mapValue = new this.AMap.Map("userMap", {
             center: [120.19, 30.26],
             mapStyle: "amap://styles/2ed665608ffdc0b14627b0eeb7c5b68c",
-            // viewMode: '3D'
+            viewMode: '3D',
             resizeEnable: true, // 是否监控地图容器尺寸变化，默认值为false
             expandZoomRange: true, // 是否支持可以扩展最大缩放级别,和zooms属性配合使用设置为true的时候，zooms的最大级别在PC上可以扩大到20级，移动端还是高清19/非高清20
             // gestureHandling: "greedy",//谷歌里面的// hybrid包含卫星和地名
@@ -201,13 +201,13 @@ export default {
     mapPolyline(bounds, x, polygons) {
       let polyline = new this.AMap.Polyline({
         map: this.mapValue,
-        strokeWeight: 5,
+        strokeWeight: 2,
         strokeOpacity: 1,
-        strokeColor: "#fff",
+        strokeColor: "#a0ddf9",
         cursor: "pointer",
         path: bounds[x],
-        fillOpacity: 0,
-        fillColor: "#000",
+        fillOpacity: 0.3,
+        fillColor: "#67ccfb",
         strokeStyle: "",
       });
       polygons.push(polyline);
@@ -218,17 +218,17 @@ export default {
         map: this.mapValue,
         strokeWeight: 2,
         strokeOpacity: 1,
-        strokeColor: "#4d4d4d",
+        strokeColor: "#a0ddf9",
         cursor: "pointer",
         path: bounds[x],
-        fillOpacity: 0.6,
-        fillColor: "#38448e",
+        fillOpacity: 0.3,
+        fillColor: "#67ccfb",
         id: x,
         strokeStyle: "",
         zIndex: 9,
       });
       polygons.push(polygon);
-      this.polygonMouse(polygon);
+      // this.polygonMouse(polygon);
       this.polygonClick(polygon);
     },
     //搜索行政区生成行政区划polygon
