@@ -411,17 +411,17 @@ export default {
           bottom: "0",
           containLabel: true,
         },
-        color: [
-          "rgba(248,194,254,0.5)",//紫
-          "#fff",
-          "#fac858",
-          "#ee6666",
-          "#73c0de",
-          "#3ba272",
-          "#fc8452",
-          "#9a60b4",
-          "#d7a0f9",//chen
-        ],
+        // color: [
+        //   "rgba(253,233,254,0.5)",//紫
+        //   "#fff",
+        //   "#fac858",
+        //   "#ee6666",
+        //   "#73c0de",
+        //   "#3ba272",
+        //   "#fc8452",
+        //   "#9a60b4",
+        //   "#d7a0f9",//chen
+        // ],
         legend: {
           orient: "vertical",
           left: "left",
@@ -510,6 +510,7 @@ export default {
             type: "pie",
             radius: "90%",
             roseType: "area",
+            center:['70%','50%'],
             label: {
               show: false,
             },
@@ -561,7 +562,7 @@ export default {
         "10p",
         "11p",
       ],
-      capitalScaleDays: ["1", "2", "3", "4", "5", "6", "7"],
+      capitalScaleDays: ["1500以上", "500-1500", "200-500", "100-200", "0-100"],
       capitalScaleData: [
         [0, 0, 5],
         [0, 1, 1],
@@ -755,16 +756,24 @@ export default {
         textBaseline: "middle",
         top: ((idx + 0.5) * 100) / 7 + "%",
         text: day,
+        textStyle:{
+          color:"#fff",
+          fontSize:12
+        }
       });
       this.capitalScale.singleAxis.push({
         left: 100,
         type: "category",
         boundaryGap: false,
         data: this.capitalScalehours,
+        axisTick:{
+          show:false,
+        },
         top: (idx * 100) / 7 + 5 + "%",
         height: 100 / 7 - 10 + "%",
         axisLabel: {
           interval: 2,
+          show:false,
         },
       });
       this.capitalScale.series.push({
@@ -773,7 +782,7 @@ export default {
         type: "scatter",
         data: [],
         symbolSize: (dataItem) => {
-          return dataItem[1];
+          return dataItem[1]*2;
         },
       });
     });
