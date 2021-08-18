@@ -18,7 +18,11 @@
         <BankInfo v-if="action == 1"></BankInfo>
       </transition>
       <transition name="fade">
-        <FirmInfo v-if="action == 2" :frimData="frimData"></FirmInfo>
+        <FirmInfo
+          v-if="action == 2"
+          :frimData="frimData"
+          :companyDetail="companyDetail"
+        ></FirmInfo>
       </transition>
       <!-- 地图标题 -->
       <transition name="fade">
@@ -79,6 +83,7 @@ export default {
         area: null,
       },
       frimData: {},
+      companyDetail: [],
     };
   },
   mounted() {
@@ -203,7 +208,7 @@ export default {
         } else if (12 < currentZoom < 16) {
           this.mapValue.remove(this.texts);
           // this.action = 1
-        } 
+        }
       });
     },
     //画线
@@ -314,9 +319,12 @@ export default {
                 fillColor: "#fff",
               });
             });
-            // companyCircle.on("click", () => {
-            //   this.action = 2;
-            // });
+            companyCircle.on("click", () => {
+              this.companyDetail = companyCircle._opts.center;
+              console.log(this.companyDetail);
+              let companyDetail = this.companyDetail;
+              this.bus.$emit("getCompanyDetail", companyDetail);
+            });
 
             companyCircle.on("mouseout", () => {
               companyCircle.setOptions({

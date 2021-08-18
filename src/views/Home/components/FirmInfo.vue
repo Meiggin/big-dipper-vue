@@ -139,7 +139,9 @@
                         <td v-if="item.name != '暂无数据'">{{ index + 1 }}</td>
                         <td v-if="item.name != '暂无数据'">{{ item.name }}</td>
                         <td v-if="item.name != '暂无数据'">{{ item.value }}</td>
-                        <td rowspan="3" v-if="item.name == '暂无数据'">{{item.name}}</td>
+                        <td rowspan="3" v-if="item.name == '暂无数据'">
+                          {{ item.name }}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -179,8 +181,8 @@ import {
 } from "@/api/index";
 export default {
   name: "FirmInfo",
+  props: ["frimData", "companyDetail"],
   components: { sideBorder },
-  props: ["frimData"],
   data() {
     return {
       financingData: [],
@@ -493,6 +495,9 @@ export default {
       this.getShareHolder();
       this.getCompanyScore();
       this.getCompanyItem();
+      this.bus.$on("getCompanyDetail", (val) => {
+        console.log(val);
+      });
     },
     getCompanyInfoByRegNo() {
       getCompanyInfoByRegNo(this.search).then((res) => {
@@ -559,6 +564,15 @@ export default {
           this.firmProductData = res.data;
         }
       });
+    },
+  },
+  watch: {
+    companyDetail: {
+      handler(newValue, oldValue) {
+        console.log(newValue, oldValue); //父组件param对象改变会触发此函数
+      },
+      deep: true,
+      immediate: true,
     },
   },
   beforeDestroy() {

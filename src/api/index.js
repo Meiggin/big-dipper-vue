@@ -167,3 +167,10 @@ export function getCompanyItem(query) {
         params: query
     })
 }
+export function getCompanyDetail(query) {
+    return request({
+        url: '/company/getCompanyDetail',
+        method: 'get',
+        params: query
+    })
+}
