@@ -115,3 +115,55 @@ export function getCompanyInfo(query) {
     })
 }
 
+export function getBankData(query) {
+    return request({
+        url: '/getBankData',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getShareHolder(query) {
+    return request({
+        url: '/company/getShareHolder',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getCompanyInfoByRegNo(query) {
+    return request({
+        url: '/company/getCompanyInfoByRegNo',
+        method: 'get',
+        params: query
+    })
+}
+
+export function getCompanyAnalysis(query) {
+    return request({
+        url: '/company/getCompanyAnalysis',
+        method: 'get',
+        params: query
+    })
+}
+export function getRealTimeIndex(query) {
+    return request({
+        url: '/company/getRealTimeIndex',
+        method: 'get',
+        params: query
+    })
+}
+export function getCompanyScore(query) {
+    return request({
+        url: '/company/getCompanyScore',
+        method: 'get',
+        params: query
+    })
+}
+export function getCompanyItem(query) {
+    return request({
+        url: '/company/getCompanyItem',
+        method: 'get',
+        params: query
+    })
+}

@@ -29,7 +29,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: rgba(0, 0, 0, 0.5);
+		background: rgba(0, 0, 0, 0.8);
 		z-index: 10;
 
 		>>> .loading-tip {
@@ -410,17 +410,16 @@
 									background: #2653ac;
 									opacity: 0.5;
 									width: 100%;
-									height: 95px;
+									height: 97px;
+									margin-top: -83px;
 								}
 
 								p {
-									position: absolute;
-									top: 0;
 									font-size: 48px;
 									color: #2a5cc1;
 									font-weight: bold;
-									left: 70px;
-									top: 10px;
+									text-align: center;
+									margin-top: 10px;
 
 									span {
 										font-size: 26px;
@@ -477,17 +476,16 @@
 									background: #330f18;
 									opacity: 0.5;
 									width: 100%;
-									height: 95px;
+									margin-top: -83px;
+									height: 97px;
 								}
 
 								p {
-									position: absolute;
-									top: 0;
+									text-align: center;
+									margin-top: 10px;
 									font-size: 48px;
 									color: #c14d63;
 									font-weight: bold;
-									left: 70px;
-									top: 10px;
 
 									span {
 										font-size: 26px;
@@ -512,75 +510,61 @@
 						padding-bottom: 50px;
 
 						.surrounding-right-table {
-							height: 100%;
+							height: 700px;
+							overflow-y: auto;
+
 							table {
-									border-collapse: collapse;
-									width: 802px;
-									text-align: center;
-									font-size: 12px;
-									table-layout: fixed;
+								border-collapse: collapse;
+								width: 802px;
+								text-align: center;
+								table-layout: fixed;
 
-									td {
-										white-space: nowrap;
-										text-overflow: ellipsis;
-										overflow: hidden;
+								td {
+									white-space: nowrap;
+									text-overflow: ellipsis;
+									overflow: hidden;
+									padding: 0 10px;
+								}
+
+								thead {
+									font-size: 27px;
+									line-height: 80px;
+									color: #3779fd;
+
+									tr, .rank {
+										width: 800px;
 									}
 
-									thead {
-										font-size: 17px;
-										color: #3779fd;
-
-										tr, .rank {
-											width: 800px;
-										}
-
-										.score {
-											width: 200px;
-										}
-									}
-
-									tbody {
-										tr {
-											height: 40px;
-										}
-
-										tr:nth-child(odd) {
-											background: #10152c;
-										}
+									.score {
+										width: 200px;
 									}
 								}
-							// table {
-							// 	border-collapse: collapse;
-							// 	text-align: center;
-							// 	font-size: 22px;
-							// 	overflow hidden
 
-							// 	td {
-							// 		white-space: nowrap;
-							// 		text-overflow: ellipsis;
-							// 		overflow: hidden;
-							// 	}
+								tbody {
+									overflow-y: auto;
+									overflow-x: hidden;
 
-							// 	thead {
-							// 		font-size: 26px;
-							// 		color: #3779fd;
-							// 		line-height: 100px;
+									tr {
+										line-height: 80px;
+										cursor: pointer;
+										border-radius: 4px;
+									}
 
-							// 		tr {
-							// 			width: 50px;
-							// 		}
-							// 	}
+									tr:nth-child(odd) {
+										background: #10152c;
+									}
 
-							// 	tbody {
-							// 		tr {
-							// 			height: 80px;
-							// 		}
+									tr:hover {
+										background: rgba(255, 200, 200, 0.3);
+									}
+								}
+							}
+						}
 
-							// 		tr:nth-child(odd) {
-							// 			background: #10152c;
-							// 		}
-							// 	}
-							// }
+						.surrounding-right-table::-webkit-scrollbar {
+							width: 10px;
+							height: 10px;
+							background: rgba(255, 255, 255, 0);
 						}
 					}
 
@@ -658,10 +642,22 @@
 									margin: 0 auto;
 									width: 90%;
 
+									p {
+										text-align: center;
+									}
+
 									thead {
 										tr {
 											th {
 												font-weight: 400;
+											}
+										}
+									}
+
+									tbody {
+										tr {
+											td {
+												text-align: center;
 											}
 										}
 									}
@@ -744,10 +740,23 @@
 								width: 130px;
 							}
 
-							thead {
-								tr {
-									th {
-										color: #2c61ca;
+							table {
+								thead {
+									font-size: 22px;
+
+									tr {
+										th {
+											color: #2c61ca;
+										}
+									}
+								}
+
+								tbody {
+									tr {
+										td {
+											line-height: 50px;
+											font-size: 19px;
+										}
 									}
 								}
 							}
@@ -764,7 +773,10 @@
 							table {
 								border-collapse: collapse;
 								width: 832px;
-								text-align: center;
+								text-align: center;	
+								thead{
+									color: #2c61ca;
+								}
 
 								tr {
 									height: 60px;

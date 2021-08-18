@@ -7,7 +7,7 @@
           <img class="titlePubilc-img" src="../../../assets/title.png" alt="" />
           <p class="title-bank">
             杭州市银行总数
-            <span>1125</span>
+            <span>11205</span>
             家
           </p>
           <p class="title-bank-add">
@@ -502,7 +502,7 @@ export default {
           orient: "vertical",
           textStyle: {
             color: "#b3b3b3",
-            fontSize: "13px",
+            fontSize: "20px",
           },
         },
         series: [
@@ -782,12 +782,12 @@ export default {
         type: "scatter",
         data: [],
         symbolSize: (dataItem) => {
-          return dataItem[1]*2;
+          return dataItem[1]*4;
         },
       });
     });
-    let data = this.capitalScaleData;
-    data.forEach((dataItem) => {
+    let Scaledata = this.capitalScaleData;
+    Scaledata.forEach((dataItem) => {
       this.capitalScale.series[dataItem[0]].data.push([
         dataItem[1],
         dataItem[2],

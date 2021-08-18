@@ -28,6 +28,7 @@ export default {
       title: "分布态势",
       showSpan: false,
       area: "",
+      num: "",
     };
   },
 

@@ -28,7 +28,7 @@
                 <div class="bank-deposit">
                   <p class="bank-deposit-title">本月存款额</p>
                   <div class="bank-deposit-block-wrap">
-                    <p>162587<span>万元</span></p>
+                    <p>{{ bankData.ckqs[0] }}<span>万元</span></p>
                     <div class="bank-deposit-block"></div>
                   </div>
                   <p class="bank-deposit-info-title">
@@ -39,16 +39,16 @@
                   </p>
                   <div class="bank-deposit-info">
                     <p>
-                      11257
+                      {{ bankData.ck }}
                       <span>万元</span>
                     </p>
-                    <p>110.27<span> %</span></p>
+                    <p>{{ bankData.ckRate }}<span></span></p>
                   </div>
                 </div>
                 <div class="bank-loan">
                   <p class="bank-loan-title">本月贷款额</p>
                   <div class="bank-loan-block-wrap">
-                    <p>162587<span>万元</span></p>
+                    <p>{{ bankData.dkqs[0] }}<span>万元</span></p>
                     <div class="bank-loan-block"></div>
                   </div>
                   <p class="bank-loan-info-title">
@@ -57,10 +57,10 @@
                   </p>
                   <div class="bank-loan-info">
                     <p>
-                      11257
+                      {{ bankData.dk }}
                       <span>万元</span>
                     </p>
-                    <p>110.27<span> %</span></p>
+                    <p>{{ bankData.dkRate }}<span> </span></p>
                   </div>
                 </div>
               </div>
@@ -116,11 +116,9 @@
                       </thead>
                       <tbody>
                         <tr v-for="(item, index) in frimData" :key="index">
-                          <div v-if="index < 9">
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ item.entName }}</td>
-                            <td>{{ item.value }}</td>
-                          </div>
+                          <td>{{ index + 1 }}</td>
+                          <td class="tableFrimName">{{ item.entname }}</td>
+                          <td>{{ item.avgScore }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -140,7 +138,11 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item, index) in frimSurrounding" :key="index">
+                      <tr
+                        v-for="(item, index) in frimSurrounding"
+                        :key="index"
+                        @click="companyClick(item)"
+                      >
                         <td>{{ item.entName }}</td>
                         <td>{{ item.industry }}</td>
                         <td>{{ item.regAddr }}</td>
@@ -159,7 +161,12 @@
 
 <script>
 import sideBorder from "@/components/sideBorder/index";
-import { getBankInfo, getCompanyInfo } from "@/api/index";
+import {
+  getBankInfo,
+  getCompanyInfo,
+  getBankData,
+  getCompanyOverview,
+} from "@/api/index";
 const echarts = require("echarts");
 export default {
   name: "BankInfo",
@@ -280,18 +287,7 @@ export default {
           ],
         },
       },
-      frimData: [
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-        { name: "1", value: "100" },
-      ],
+      frimData: [],
       frimSurrounding: [
         { name: "1", value: "100" },
         { name: "1", value: "100" },
@@ -300,6 +296,10 @@ export default {
         { name: "1", value: "100" },
         { name: "1", value: "100" },
       ],
+      companyClick(e) {
+        this.bus.$emit("clickCompany", e);
+      },
+      bankData: {},
     };
   },
   created() {},
@@ -307,11 +307,13 @@ export default {
     this.bus.$on("bankName", (val) => {
       this.searchData.name = val;
       this.getBankInfo();
+      this.getBankData();
     });
     this.bus.$on("latLong", (val) => {
       this.searchData.latitude = val.lat;
       this.searchData.longitude = val.lng;
       this.getCompanyInfo();
+      this.getCompanyOverview();
     });
   },
   methods: {
@@ -325,7 +327,20 @@ export default {
         console.log(res);
         this.firmDatasum = res.data.length;
         this.frimSurrounding = res.data;
-        this.frimSurrounding.length = 9;
+      });
+    },
+    getBankData() {
+      getBankData(this.searchData).then((res) => {
+        this.bankData = res.data;
+        this.depositTrendEchart.xAxis.data = res.data.month.reverse();
+        this.depositTrendEchart.series[0].data = res.data.ckqs.reverse();
+        this.depositTrendEchart.series[1].data = res.data.dkqs.reverse();
+      });
+    },
+    getCompanyOverview() {
+      getCompanyOverview(this.searchData).then((res) => {
+        console.log(res.data.top);
+        this.frimData = res.data.top;
       });
     },
   },

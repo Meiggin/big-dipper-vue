@@ -9,13 +9,16 @@
       <div id="userMap" class="markerClass" style="height: 100%"></div>
       <!-- 边 -->
       <transition name="fade">
-        <BankDataPreview v-if="action == 0"></BankDataPreview>
+        <BankDataPreview
+          v-if="action == 0"
+          @loading="titleLoading"
+        ></BankDataPreview>
       </transition>
       <transition name="fade">
         <BankInfo v-if="action == 1"></BankInfo>
       </transition>
       <transition name="fade">
-        <FirmInfo v-if="action == 2"></FirmInfo>
+        <FirmInfo v-if="action == 2" :frimData="frimData"></FirmInfo>
       </transition>
       <!-- 地图标题 -->
       <transition name="fade">
@@ -75,13 +78,12 @@ export default {
         bankName: null,
         area: null,
       },
+      frimData: {},
     };
   },
   mounted() {
     this.initUserMap();
-
     this.setElementHeight();
-
     this.showLoading();
     window.addEventListener("resize", this.setElementHeight);
     this.$once("hook:beforeDestroy", () => {
@@ -94,6 +96,12 @@ export default {
       this.bus.$on("actionFlow", (val) => {
         if (val == 0) {
           this.mapValue.setZoom(10);
+        }
+      });
+      this.bus.$on("clickCompany", (val) => {
+        if (val) {
+          this.action = 2;
+          this.frimData = val;
         }
       });
       this.bus.$on("bankType", (val) => {
@@ -112,7 +120,6 @@ export default {
         }
       });
     },
-    // 关闭延时器
     titleLoading() {
       this.showLoading();
     },
@@ -151,7 +158,7 @@ export default {
           this.mapValue = new this.AMap.Map("userMap", {
             center: [120.19, 30.26],
             mapStyle: "amap://styles/2ed665608ffdc0b14627b0eeb7c5b68c",
-            viewMode: '3D',
+            viewMode: "3D",
             resizeEnable: true, // 是否监控地图容器尺寸变化，默认值为false
             expandZoomRange: true, // 是否支持可以扩展最大缩放级别,和zooms属性配合使用设置为true的时候，zooms的最大级别在PC上可以扩大到20级，移动端还是高清19/非高清20
             // gestureHandling: "greedy",//谷歌里面的// hybrid包含卫星和地名
@@ -180,6 +187,7 @@ export default {
     mapZoomend() {
       this.mapValue.on("zoomend", (e) => {
         let currentZoom = this.mapValue.getZoom();
+        console.log(currentZoom);
         if (currentZoom <= 10) {
           this.mapValue.clearMap();
           this.districtPolygon(this.ADlist);
@@ -194,7 +202,8 @@ export default {
           this.mapValue.add(this.texts);
         } else if (12 < currentZoom < 16) {
           this.mapValue.remove(this.texts);
-        }
+          // this.action = 1
+        } 
       });
     },
     //画线
@@ -305,9 +314,10 @@ export default {
                 fillColor: "#fff",
               });
             });
-            companyCircle.on("click", () => {
-              this.action = 2;
-            });
+            // companyCircle.on("click", () => {
+            //   this.action = 2;
+            // });
+
             companyCircle.on("mouseout", () => {
               companyCircle.setOptions({
                 radius: item.properties.num * 50,

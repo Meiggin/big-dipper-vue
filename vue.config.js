@@ -23,16 +23,16 @@ module.exports = {
     }
   },
   devServer: {
-    port: 8089, // 端口号
+    port: 8080, // 端口号
     host: '0.0.0.0',
     https: false, // https:{type:Boolean}
     open: true, //配置自动启动浏览器
     proxy: {
       '/api': {
         // target: `http://192.168.2.119:8080`,
-        target: `http://192.168.1.65:80881`,
+        target: `http://192.168.1.65:8081/`,
         // target: `http://192.168.43.183:8080`,
-        changeOrigin: true,
+        changeOrigin: true, 
         pathRewrite: {
           ['^' + '/api']: ''
         }

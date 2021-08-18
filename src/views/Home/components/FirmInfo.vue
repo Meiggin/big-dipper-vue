@@ -10,16 +10,16 @@
                 <div>
                   <p>企业名称:</p>
                   <p>地址:</p>
-                  <p>统一社会信用代码:</p>
+                  <p>社会信用代码:</p>
                   <p>联系电话:</p>
                   <p>所属行业:</p>
                 </div>
                 <div class="info">
-                  <p>中国工商银行</p>
-                  <p>西湖区文二路391号西湖国际科技大厦</p>
-                  <p>周一至周五</p>
-                  <p>13056874512</p>
-                  <p>2008年</p>
+                  <p>{{ companyInfo.entname }}</p>
+                  <p>{{ companyInfo.regaddr }}</p>
+                  <p>{{ companyInfo.regno }}</p>
+                  <p>{{ companyInfo.telephone }}</p>
+                  <p>{{ companyInfo.industry }}</p>
                 </div>
               </div>
             </sideBorder>
@@ -52,7 +52,8 @@
                           <th>融资方</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <p v-if="financingData.length == 0">暂无信息</p>
+                      <tbody v-else>
                         <tr v-for="(item, index) in financingData" :key="index">
                           <td>{{ item.dimension }}</td>
                           <td>{{ item.name }}</td>
@@ -111,9 +112,9 @@
                             v-for="(item, index) in dimensionData"
                             :key="index"
                           >
-                            <td>{{ item.dimension }}</td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.value }}</td>
+                            <td>{{ item.newName }}</td>
+                            <td>{{ item.indicatorData }}</td>
+                            <td>{{ item.random }}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -135,9 +136,10 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item, index) in firmProductData" :key="index">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.value }}</td>
+                        <td v-if="item.name != '暂无数据'">{{ index + 1 }}</td>
+                        <td v-if="item.name != '暂无数据'">{{ item.name }}</td>
+                        <td v-if="item.name != '暂无数据'">{{ item.value }}</td>
+                        <td rowspan="3" v-if="item.name == '暂无数据'">{{item.name}}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -147,8 +149,12 @@
             <sideBorder sideTitle="企业经营范围信息">
               <div slot="sideBorderData" class="business-scope">
                 <div class="business-block">
-                    <p>经营范围是指国家允许企业生产和经营的商品类别、品种及服务项目，是企业业务活动范围的法律界限，体现企业民事权利能力和行为能力的核心内容。</p>
-                    <p>简单来说，经营范围是指企业可以从事的生产经营与服务项目，是进行公司注册申请时的必填项。</p>
+                  <p>
+                    经营范围是指国家允许企业生产和经营的商品类别、品种及服务项目，是企业业务活动范围的法律界限，体现企业民事权利能力和行为能力的核心内容。
+                  </p>
+                  <p>
+                    简单来说，经营范围是指企业可以从事的生产经营与服务项目，是进行公司注册申请时的必填项。
+                  </p>
                 </div>
               </div>
             </sideBorder>
@@ -163,15 +169,21 @@
 import sideBorder from "@/components/sideBorder/index";
 import axios from "axios";
 const echarts = require("echarts");
+import {
+  getShareHolder,
+  getCompanyInfoByRegNo,
+  getCompanyAnalysis,
+  getRealTimeIndex,
+  getCompanyItem,
+  getCompanyScore,
+} from "@/api/index";
 export default {
   name: "FirmInfo",
   components: { sideBorder },
+  props: ["frimData"],
   data() {
     return {
-      financingData: [
-        { name: "1", value: "100", dimension: "规模" },
-        { name: "1", value: "100", dimension: "风险" },
-      ],
+      financingData: [],
       dimensionData: [
         { name: "1", value: "100", dimension: "规模" },
         { name: "1", value: "100", dimension: "风险" },
@@ -199,7 +211,7 @@ export default {
             type: "gauge",
             progress: {
               show: true,
-              width: 5,
+              width: 10,
             },
             itemStyle: {
               color: "#d06c1d",
@@ -210,7 +222,7 @@ export default {
             },
             axisLine: {
               lineStyle: {
-                width: 5,
+                width: 10,
               },
             },
             axisTick: {
@@ -254,13 +266,13 @@ export default {
             },
             data: [
               { value: 40, name: "rose 1" },
-              { value: 38, name: "rose 2" },
-              { value: 32, name: "rose 3" },
-              { value: 30, name: "rose 4" },
-              { value: 28, name: "rose 5" },
-              { value: 26, name: "rose 6" },
-              { value: 22, name: "rose 7" },
-              { value: 18, name: "rose 8" },
+              { value: 40, name: "rose 2" },
+              { value: 40, name: "rose 3" },
+              { value: 40, name: "rose 4" },
+              { value: 40, name: "rose 5" },
+              { value: 40, name: "rose 6" },
+              { value: 40, name: "rose 7" },
+              { value: 50, name: "rose 8" },
             ],
           },
         ],
@@ -282,7 +294,7 @@ export default {
               { text: "行业", max: 100 },
               { text: "风险", max: 100 },
             ],
-             radius: 40,
+            radius: 40,
           },
         ],
         series: [
@@ -304,7 +316,7 @@ export default {
       potentialEcharts: {
         grid: {
           left: "1%",
-          right: "1%",
+          right: "3%",
           top: "0",
           bottom: "0",
           containLabel: true,
@@ -378,7 +390,7 @@ export default {
             type: "gauge",
             progress: {
               show: true,
-              width: 5,
+              width: 10,
             },
             itemStyle: {
               color: "#c04bd0",
@@ -389,7 +401,7 @@ export default {
             },
             axisLine: {
               lineStyle: {
-                width: 5,
+                width: 10,
               },
             },
             axisTick: {
@@ -416,9 +428,14 @@ export default {
           },
         ],
       },
+      search: {
+        regNo: "",
+      },
+      companyInfo: {},
     };
   },
   mounted() {
+    this.getData();
     axios({
       method: "get",
       url: this.ROOT_PATH,
@@ -426,7 +443,6 @@ export default {
       crossDomain: true,
       cache: false,
     }).then((res) => {
-      console.log(res);
       res.data.nodes.forEach((node) => {
         node.symbolSize = node.symbolSize / 5;
       });
@@ -468,8 +484,86 @@ export default {
       };
     });
   },
-  methods: {},
-  beforeDestroy() {},
+  methods: {
+    getData() {
+      this.search = this.frimData;
+      this.getCompanyInfoByRegNo();
+      this.getCompanyAnalysis();
+      this.getRealTimeIndex();
+      this.getShareHolder();
+      this.getCompanyScore();
+      this.getCompanyItem();
+    },
+    getCompanyInfoByRegNo() {
+      getCompanyInfoByRegNo(this.search).then((res) => {
+        this.companyInfo = res.data;
+      });
+    },
+
+    getCompanyAnalysis() {
+      getCompanyAnalysis(this.search).then((res) => {
+        // this.companyInfo = res.data;
+        this.industryEchart.series[0].data[0].value =
+          res.data.industry.companyRegCapital;
+        this.industryEchart.series[0].min = res.data.industry.index[0];
+        this.industryEchart.series[0].max = res.data.industry.index[3];
+
+        this.urbanEchart.series[0].data[0].value =
+          res.data.city.companyRegCapital;
+        this.urbanEchart.series[0].min = res.data.city.index[0];
+        this.urbanEchart.series[0].max = res.data.city.index[3];
+      });
+    },
+    getRealTimeIndex() {
+      getRealTimeIndex(this.search).then((res) => {
+        if (res.data.financing.length != 0) {
+          this.financingData = res.data.financing;
+        } else {
+          this.financingData = [];
+        }
+      });
+    },
+
+    getShareHolder() {
+      getShareHolder(this.search).then((res) => {
+        this.potentialEcharts.yAxis.data = res.data.y;
+        this.potentialEcharts.series.data = res.data.x;
+      });
+    },
+    getCompanyScore() {
+      getCompanyScore(this.search).then((res) => {
+        res.data.indicator.map((item) => {
+          item.text = item.name;
+          let newName = item.name;
+          item.newName = newName.split("(")[0];
+        });
+        for (let i in res.data.indicator) {
+          res.data.indicator[i].indicatorData = res.data.data[i];
+          let random = Math.round(Math.random() * 1000);
+          res.data.indicator[i].random = random;
+        }
+        this.firmScoreEcharts.radar[0].indicator = res.data.indicator;
+        this.firmScoreEcharts.series[0].data[0].value = res.data.data;
+        this.dimensionData = res.data.indicator;
+      });
+    },
+    getCompanyItem() {
+      getCompanyItem(this.search).then((res) => {
+        if (res.data.length == 0) {
+          this.firmProductData = [
+            {
+              name: "暂无数据",
+            },
+          ];
+        } else {
+          this.firmProductData = res.data;
+        }
+      });
+    },
+  },
+  beforeDestroy() {
+    // this.bus.$off("clickCompany");
+  },
 };
 </script>
 
