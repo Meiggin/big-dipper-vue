@@ -431,14 +431,14 @@ export default {
             name: "访问来源",
             type: "pie",
             radius: "100%",
-            center:['70%','50%'],
-             label: {
-                show: false,
-                position: "center",
-              },
-              labelLine: {
-                show: false,
-              },
+            center: ["70%", "50%"],
+            label: {
+              show: false,
+              position: "center",
+            },
+            labelLine: {
+              show: false,
+            },
             data: [
               { value: 1048, name: "搜索引擎" },
               { value: 735, name: "直接访问" },
@@ -446,10 +446,10 @@ export default {
               { value: 484, name: "联盟广告" },
               { value: 300, name: "视频广告" },
             ],
-            itemStyle:{
-              normal:{
-                opacity:1
-              }
+            itemStyle: {
+              normal: {
+                opacity: 1,
+              },
             },
             emphasis: {
               itemStyle: {
@@ -510,7 +510,7 @@ export default {
             type: "pie",
             radius: "90%",
             roseType: "area",
-            center:['70%','50%'],
+            center: ["70%", "50%"],
             label: {
               show: false,
             },
@@ -756,24 +756,24 @@ export default {
         textBaseline: "middle",
         top: ((idx + 0.5) * 100) / 7 + "%",
         text: day,
-        textStyle:{
-          color:"#fff",
-          fontSize:12
-        }
+        textStyle: {
+          color: "#fff",
+          fontSize: 12,
+        },
       });
       this.capitalScale.singleAxis.push({
         left: 100,
         type: "category",
         boundaryGap: false,
         data: this.capitalScalehours,
-        axisTick:{
-          show:false,
+        axisTick: {
+          show: false,
         },
         top: (idx * 100) / 7 + 5 + "%",
         height: 100 / 7 - 10 + "%",
         axisLabel: {
           interval: 2,
-          show:false,
+          show: false,
         },
       });
       this.capitalScale.series.push({
@@ -782,7 +782,7 @@ export default {
         type: "scatter",
         data: [],
         symbolSize: (dataItem) => {
-          return dataItem[1]*4;
+          return dataItem[1] * 4;
         },
       });
     });
@@ -797,7 +797,6 @@ export default {
   methods: {
     busMent() {
       this.bus.$on("bankType", (val) => {
-        console.log(1);
         if (val == null) {
           this.searchList.bankType = null;
           this.bankStr = "杭州市银行";
@@ -806,13 +805,13 @@ export default {
           this.searchList.bankType = val;
           this.ifBankTitle(val);
           this.getBankNumByStartTime(); //银行增加趋势
-          this.getBankNumByType(); //各银行分布情况
-
-          if (this.searchList.area != "") {
+          if (this.searchList.area != "99") {
             this.getBankNumByTypeAndArea(); //类and区银行分布
           } else {
             this.getBankNumByArea(); //区各银行分布
+            console.log(0);
           }
+          this.getBankNumByType(); //各银行分布情况
         }
         this.getCompanyOverview(); //企业总览
         this.getCompanyAccountRate(); //企业开户行占比
