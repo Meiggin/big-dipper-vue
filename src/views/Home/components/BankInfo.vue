@@ -299,7 +299,10 @@ export default {
       companyClick(e) {
         this.bus.$emit("clickCompany", e);
       },
-      bankData: {},
+      bankData: {
+        dkqs:[],
+        ckqs:[]
+      },
     };
   },
   created() {},

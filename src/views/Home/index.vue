@@ -84,6 +84,7 @@ export default {
       },
       frimData: {},
       companyDetail: [],
+      mapPolygonValue: null,
     };
   },
   mounted() {
@@ -282,7 +283,8 @@ export default {
         this.circle = new AMap.Circle({
           center: e.lnglat, // 圆心位置
           radius: 5000, // 圆半径
-          fillColor: "red", // 圆形填充颜色
+          fillColor: "#67ccfb", // 圆形填充颜色
+          fillOpacity: 0.3,
           strokeColor: "#fff", // 描边颜色
           strokeWeight: 4, // 描边宽度
           zIndex: 15,
@@ -321,9 +323,19 @@ export default {
             });
             companyCircle.on("click", () => {
               this.companyDetail = companyCircle._opts.center;
-              console.log(this.companyDetail);
-              let companyDetail = this.companyDetail;
-              this.bus.$emit("getCompanyDetail", companyDetail);
+              // console.log(this.companyDetail);
+              // let companyDetail = this.companyDetail;
+              // this.bus.$emit("getCompanyDetail", companyDetail);
+              this.mapValue.clearMap();
+              this.mapValue.setZoom(10);
+              // console.log(this.mapPolygonValue)
+              // this.polygonClick(this.mapPolygonValue)
+              // let geocoder = new this.AMap.Geocoder();
+              // geocoder.getAddress(this.companyDetail, (status, result) => {
+              //   let item = [{ str: result.regeocode.addressComponent.district }];
+              //   console.log(item)
+              //   this.districtPolygon(item)
+              // })
             });
 
             companyCircle.on("mouseout", () => {
@@ -374,6 +386,9 @@ export default {
     },
     //polygon点击生成loca
     polygonClick(polygon) {
+      if (this.mapPolygonValue != null || this.mapPolygonValue != polygon) {
+        this.mapPolygonValue = polygon;
+      }
       polygon.on("click", (e) => {
         let overlaysList = this.mapValue.getAllOverlays("polygon");
         if (overlaysList.length != 1) {
@@ -389,6 +404,7 @@ export default {
             this.searchList.area = result.regeocode.addressComponent.district;
 
             this.bus.$emit("area", result.regeocode.addressComponent.district);
+            this.resultBus = result.regeocode.addressComponent.district;
             getBankNetwork(this.searchList).then((res) => {
               if (res.code == 200) {
                 this.bankOutlets.features = [];
@@ -440,6 +456,7 @@ export default {
                 this.mapValue.setFitView([e.target]);
 
                 this.mapValue.on("click", (value) => {
+                  this.mapBank = value;
                   this.fiveCircle(value);
                 });
               }
