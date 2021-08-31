@@ -323,6 +323,11 @@ export default {
     getBankInfo() {
       getBankInfo(this.searchData).then((res) => {
         this.BankInfoData = res.data;
+        if(this.BankInfoData.telephone.indexOf('-') != -1) {
+          this.BankInfoData.telephone = this.BankInfoData.telephone.substring(6,0) + '****' + this.BankInfoData.telephone.substring(10)
+        } else{
+          this.BankInfoData.telephone = this.BankInfoData.telephone.substring(2,0) + '****' + this.BankInfoData.telephone.substring(6)
+        }
       });
     },
     getCompanyInfo() {

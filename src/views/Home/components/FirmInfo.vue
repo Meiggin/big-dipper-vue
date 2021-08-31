@@ -296,7 +296,7 @@ export default {
               { text: "行业", max: 100 },
               { text: "风险", max: 100 },
             ],
-            radius: 40,
+            radius: 80,
           },
         ],
         series: [

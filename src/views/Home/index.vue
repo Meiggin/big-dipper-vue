@@ -7,6 +7,7 @@
     <section ref="sectionRef">
       <!-- 地图 -->
       <div id="userMap" class="markerClass" style="height: 100%"></div>
+      <div class="backDisplay" @click="backBlock"></div>
       <!-- 边 -->
       <transition name="fade">
         <BankDataPreview
@@ -96,8 +97,12 @@ export default {
       window.removeEventListener("resize", this.setElementHeight);
     });
     this.busMent();
+    console.log(111111111);
   },
   methods: {
+    backBlock() {
+      this.$router.push("/");
+    },
     busMent() {
       this.bus.$on("actionFlow", (val) => {
         if (val == 0) {
@@ -173,6 +178,7 @@ export default {
             defaultCursor: "pointer", // 变成小手 地图默认鼠标样式。参数defaultCursor应符合CSS的cursor属性规范
             showLabel: true, // 显示地图文字标记
           });
+          this.mapValue.clearMap();
           this.AMap.plugin("AMap.DistrictSearch", () => {
             this.district = new this.AMap.DistrictSearch({
               extensions: "all",
@@ -498,5 +504,16 @@ export default {
 
 .amap-copyright {
   opacity: 0;
+}
+
+.backDisplay {
+  height: 1rem;
+  width: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  opacity: 0;
+  cursor: pointer;
 }
 </style>
